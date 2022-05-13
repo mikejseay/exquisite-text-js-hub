@@ -1,0 +1,37 @@
+.text-spacer {
+    white-space: pre-line;
+    display: inline-block;
+    color: white;
+}
+
+#caret {
+    display: inline-block;
+    background: black;
+    height: 20px;
+    width: 1px;
+
+    animation-duration: 1s;
+    animation-name: blink;
+    animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+    from {
+        opacity: 1;
+    }
+
+    49.9% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+
+    99.9% {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
