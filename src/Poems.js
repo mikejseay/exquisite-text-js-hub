@@ -16,6 +16,7 @@ function Poems({ socket }) {
             setPoems((prevPoems) => {
                 const newPoems = {...prevPoems};
                 newPoems[poem.id] = poem;
+                console.log(newPoems);
                 return newPoems;
             });
         };

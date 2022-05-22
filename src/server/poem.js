@@ -83,8 +83,12 @@ class Connection {
 
     poemDone() {
         // this.allUsersSpectators(); // maybe not...
-        const poemString = Array.from(lines).join('\n');
+        let poemString = '';
+        for (const [key, value] of lines.entries()) {
+            poemString += value['value'];
+        }
         this.handlePoem(poemString)
+        lines.clear();
     }
 
     allUsersSpectators() {
