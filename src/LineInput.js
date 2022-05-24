@@ -21,23 +21,18 @@ function useStateRef(initialValue) {
     return [value, setValue, ref];
 }
 
-// const LineInput = (socket, lineInputVisibleRef, lineInputEnabledRef) => {
 const LineInput = ({ socket }) => {
     const minCharsOnNewLine = 16;       // must have more than this many characters on 2nd line to make exquisite
     const maxCharsOnNewLine = 32;       // must have less than this many characters on 2nd line to make exquisite
     const lineSepString = '\n';
 
-    // const poemInput = useRef(`Replace this text with your own line and a half<br>of pure poetry!`);
     const [poemInput, setPoemInput] = useState('');
-    // const [poemInputSpacer, setPoemInputSpacer] = useState('');
 
-    // a single boolean that determines whether the "Done Line" & "Done Poem" button should be enabled or disabled
+    // a single boolean that determines whether the "Done Line" button should be enabled or disabled
     // it toggles based on the suitability of the current poem body to be made exquisite
     // we need an additional doneLineRef object that allows us to get its current state
     const [doneLineEnabled, setDoneLine, doneLineRef] = useStateRef(true);
-    const [donePoemEnabled, setDonePoem, donePoemRef] = useStateRef(true);
-
-    // fuck
+    const [donePoemEnabled, setDonePoem] = useState(true);
     const [lineInputVisible, setLineInputVisible] = useState(false);
     const [lineInputEnabled, setLineInputEnabled] = useState(false);
 
@@ -80,16 +75,19 @@ const LineInput = ({ socket }) => {
     // one for the poem body
     // handles any change to poem body, a ContentEditable div object (user entered a new character or deleted one)
     function handlePoemBodyChange(evt) {
-        evt.preventDefault()
+        evt.preventDefault();
 
         // broadcast that there was a change
         // this broadcasts to everyone including the sender
-        // socket.emit('lineEdit', evt.target.value);
-        setPoemInput(evt.target.value);
+        setPoemInput(evt.target.value);                         // heroku
+        socket.emit('lineEdit', evt.target.value);              // heroku
+
+        // socket.emit('lineEdit', evt.target.value);           // local
+
 
         // splitting it into its lines
-        const poemParts = evt.target.value.split(lineSepString)
-        const poemSecondLine = poemParts[1]
+        const poemParts = evt.target.value.split(lineSepString);
+        const poemSecondLine = poemParts[1].trim();
 
         // only enable the button if there are 2 lines AND the 2nd line is between 20 and 40 characters
         setDoneLine(poemParts.length === 2 &&
@@ -109,8 +107,8 @@ const LineInput = ({ socket }) => {
             const [firstPart, secondPart] = poemParts;
 
             // broadcast that there was a change
+            setPoemInput(secondPart);
             socket.emit('lineEdit', secondPart);
-            // setPoemInput(secondPart);
 
             // emit a message of the first part to be posted to the Lines
             socket.emit('line', firstPart);
@@ -129,11 +127,15 @@ const LineInput = ({ socket }) => {
         socket.emit('line', poemInput);
 
         // set the input textarea to be blank
+        setPoemInput('');
         socket.emit('lineEdit', '');
-        // setPoemInput('');
 
         // this client only tell the server to do the ending event
         socket.emit('poemDone');
+
+        // this event should also set the value of the "lines" variable
+        // in Lines.js to be initialized (an empty object)...
+        socket.emit('clearLines');
 
         // this client only tell the server to do the sendUserInfo event
         socket.emit('sendAllUserInfo');

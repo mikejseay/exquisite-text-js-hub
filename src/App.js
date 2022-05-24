@@ -6,14 +6,16 @@ import Poems from './Poems';
 import LineInput from './LineInput';
 import UserInfo from "./UserInfo";
 import './App.css';
+// import express from "express";
+// import path from "path";
 
 function App() {
 
     const [socket, setSocket] = useState(null);
     useEffect(() => {
-        // const newSocket = io(`http://192.168.1.216:3000`);
-        // const newSocket = io(`http://${window.location.hostname}:3000`);
-        const newSocket = io(`/`);
+        // const serverPath = `/`;
+        const serverPath = `http://${window.location.hostname}:3000`;
+        const newSocket = io(serverPath);
         setSocket(newSocket);
         return () => newSocket.close();
     }, [setSocket]);

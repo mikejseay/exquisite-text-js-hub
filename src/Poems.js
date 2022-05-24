@@ -21,16 +21,7 @@ function Poems({ socket }) {
             });
         };
 
-        const deletePoemListener = (poemID) => {
-            setPoems((prevPoems) => {
-                const newPoems = {...prevPoems};
-                delete newPoems[poemID];
-                return newPoems;
-            });
-        };
-
         socket.on('poem', poemListener);
-        socket.on('deletePoem', deletePoemListener);
 
         // tells the server for this client to do getPoems
         // since this is client-side, it only happens for this client
@@ -38,7 +29,6 @@ function Poems({ socket }) {
 
         return () => {
             socket.off('poem', poemListener);
-            socket.off('deletePoem', deletePoemListener);
         };
     }, [socket]);
 
@@ -52,7 +42,9 @@ function Poems({ socket }) {
                         <div
                             key={poem.id}
                             className="poem-container"
-                        ><span className="poem">{poem.value}</span>
+                        >
+                            <span className="poem-title">{poem.title}</span><br></br>
+                            <span className="poem">{poem.poemString}</span>
                         </div>
                     ))}
         </div>

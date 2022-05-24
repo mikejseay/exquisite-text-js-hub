@@ -52,9 +52,9 @@ class Connection {
         socket.on('lineEdit', (value) => this.handleLineEdit(value));
 
         socket.on('poemDone', () => this.poemDone());
+        socket.on('clearLines', () => this.clearLines());
         // socket.on('getPoems', () => this.getPoems());
         // socket.on('poem', (value) => this.handlePoem(value));
-
 
         // The disconnect and connection_error are predefined events
         // that are triggered when the socket disconnects, or when an error happens during the connection.
@@ -81,11 +81,15 @@ class Connection {
         users.forEach(editRole)
     }
 
+    clearLines() {
+        this.io.emit('clearLines');
+    }
+
     poemDone() {
         // this.allUsersSpectators(); // maybe not...
         let poemString = '';
         for (const [key, value] of lines.entries()) {
-            poemString += value['value'];
+            poemString += value['value'] + '\n';
         }
         this.handlePoem(poemString)
         lines.clear();
@@ -166,7 +170,8 @@ class Connection {
     }
 
     handleLineEdit(value) {
-        this.io.sockets.emit('lineEdit', value);
+        // this.io.sockets.emit('lineEdit', value);
+        this.socket.broadcast.emit('lineEdit', value);
     }
 
     sendPoem(poem) {

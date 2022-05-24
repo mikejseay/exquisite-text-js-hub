@@ -4,7 +4,6 @@ import './Lines.css';
 // if activeEditor or inactiveEditor, NOTHING is visible here until the end
 // if spectator, EVERYTHING is visible here
 
-// function Lines(socket, linesVisibleRef) {
 function Lines({ socket }) {
 
     // The lines state is a plain object that contains each line indexed by the line ID.
@@ -24,12 +23,8 @@ function Lines({ socket }) {
             });
         };
 
-        const deleteLineListener = (lineID) => {
-            setLines((prevLines) => {
-                const newLines = {...prevLines};
-                delete newLines[lineID];
-                return newLines;
-            });
+        const clearLineListener = () => {
+            setLines({});
         };
 
         const userInfoListener = (userInfo) => {
@@ -43,10 +38,8 @@ function Lines({ socket }) {
         };
 
         socket.on('userInfo', userInfoListener);
-        // socket.emit('sendUserInfo');
-
         socket.on('line', lineListener);
-        socket.on('deleteLine', deleteLineListener);
+        socket.on('clearLines', clearLineListener);
 
         // tells the server for this client to do getLines
         // since this is client-side, it only happens for this client
@@ -55,7 +48,7 @@ function Lines({ socket }) {
         return () => {
             socket.off('userInfo', userInfoListener);
             socket.off('line', lineListener);
-            socket.off('deleteLine', deleteLineListener);
+            socket.off('clearLines', clearLineListener);
         };
     }, [socket]);
 
@@ -82,7 +75,7 @@ function Lines({ socket }) {
                             key={line.id}
                             className="line-container"
                         >
-                            <span className="line">{' '}</span>
+                            <span className="line">{'\n'}</span>
                         </div>
                     ))
             )}
@@ -95,5 +88,4 @@ export default Lines;
 // title={`Sent at ${new Date(line.time).toLocaleTimeString()}`}
 // <span className="user">{line.user.name}:</span>
 // <span className="date">{new Date(line.time).toLocaleTimeString()}</span>
-
 // <span className="line">{line.value}</span>
