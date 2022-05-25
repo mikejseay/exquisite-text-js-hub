@@ -27,6 +27,7 @@ const LineInput = ({ socket }) => {
     const lineSepString = '\n';
 
     const [poemInput, setPoemInput] = useState('');
+    // const [poemInput, setPoemInput, poemInputRef] = useStateRef('');
 
     // a single boolean that determines whether the "Done Line" button should be enabled or disabled
     // it toggles based on the suitability of the current poem body to be made exquisite
@@ -45,7 +46,7 @@ const LineInput = ({ socket }) => {
             if (userInfo['role'] === 'activeEditor') {
                 setLineInputVisible(true);
                 setLineInputEnabled(true);
-                setDoneLine(true);
+                setDoneLine(false); // was true, but it will become true if formatted correctly
                 setDonePoem(true);
             } else if (userInfo['role'] === 'inactiveEditor') {
                 setLineInputVisible(false);
@@ -84,9 +85,13 @@ const LineInput = ({ socket }) => {
 
         // socket.emit('lineEdit', evt.target.value);           // local
 
-
         // splitting it into its lines
         const poemParts = evt.target.value.split(lineSepString);
+
+        if (poemParts.length < 2) {
+            return
+        }
+
         const poemSecondLine = poemParts[1].trim();
 
         // only enable the button if there are 2 lines AND the 2nd line is between 20 and 40 characters
@@ -137,6 +142,9 @@ const LineInput = ({ socket }) => {
         // in Lines.js to be initialized (an empty object)...
         socket.emit('clearLines');
 
+        // this client only tell the server to do the turn event
+        socket.emit('allTurns');
+
         // this client only tell the server to do the sendUserInfo event
         socket.emit('sendAllUserInfo');
 
@@ -171,7 +179,7 @@ const LineInput = ({ socket }) => {
                     <div
                         autoFocus={true}
                         className={'text-spacer'}
-                    >{poemInput}<div id="caret"></div>
+                    >{'*'.repeat(poemInput.length)}<div id="caret"></div>
                     </div>
                 </div>
             )}

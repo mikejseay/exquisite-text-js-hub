@@ -16,7 +16,6 @@ function Poems({ socket }) {
             setPoems((prevPoems) => {
                 const newPoems = {...prevPoems};
                 newPoems[poem.id] = poem;
-                console.log(newPoems);
                 return newPoems;
             });
         };
@@ -37,7 +36,7 @@ function Poems({ socket }) {
         // we can switch this so that it renders previous poems according to a view
         <div className="poems-body">
             {[...Object.values(poems)]
-                    .sort((a, b) => a.time - b.time)
+                    .sort((a, b) => b.time - a.time)
                     .map((poem) => (
                         <div
                             key={poem.id}

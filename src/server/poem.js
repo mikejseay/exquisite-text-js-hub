@@ -53,7 +53,7 @@ class Connection {
 
         socket.on('poemDone', () => this.poemDone());
         socket.on('clearLines', () => this.clearLines());
-        // socket.on('getPoems', () => this.getPoems());
+        socket.on('getPoems', () => this.getPoems());
         // socket.on('poem', (value) => this.handlePoem(value));
 
         // The disconnect and connection_error are predefined events
