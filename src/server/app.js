@@ -1,6 +1,6 @@
 // I'm guessing this kind of puts everything together?
 
-const herokuDeploy = false;
+const herokuDeploy = true;
 
 // CORS stands for Cross-Origin Resource Sharing
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
