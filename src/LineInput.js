@@ -45,8 +45,14 @@ const LineInput = ({ socket }) => {
             if (userInfo['role'] === 'activeEditor') {
                 setLineInputVisible(true);
                 setLineInputEnabled(true);
-                setDoneLine(false); // was true, but it will become true if formatted correctly
                 setDonePoem(true);
+                setDoneLine(false); // was true, but it will become true if formatted correctly
+
+                // console.log(poemInput);
+
+                // const evt = {'target': {'value': poemInput}};
+                // handlePoemBodyChange(evt);
+
             } else if (userInfo['role'] === 'inactiveEditor') {
                 setLineInputVisible(false);
                 setLineInputEnabled(false);
@@ -60,8 +66,6 @@ const LineInput = ({ socket }) => {
             }
         };
 
-        socket.on('userInfo', userInfoListener);
-
         // additionally, tell React to set the poem textarea to change
         // whenever a lineEdit event is emitted
         socket.on('lineEdit', lineEditListener);
@@ -69,6 +73,8 @@ const LineInput = ({ socket }) => {
         // tells the server for this client to do getLineEdit
         // since this is client-side, it only happens for this client
         socket.emit('getLineEdit');
+
+        socket.on('userInfo', userInfoListener);
 
         return () => {
             socket.off('lineEdit', lineEditListener);
@@ -79,6 +85,7 @@ const LineInput = ({ socket }) => {
     // one for the poem body
     // handles any change to poem body, a ContentEditable div object (user entered a new character or deleted one)
     function handlePoemBodyChange(evt) {
+        // console.log(evt);
         evt.preventDefault();
 
         // broadcast that there was a change
@@ -208,3 +215,10 @@ const LineInput = ({ socket }) => {
 };
 
 export default LineInput;
+
+// const poemParts = poemInputRef.split(lineSepString);
+// console.log(poemParts);
+// const poemSecondLine = poemParts[1].trim();
+// setDoneLine(poemParts.length === 2 &&
+//     poemSecondLine.length > minCharsOnNewLine &&
+//     poemSecondLine.length < maxCharsOnNewLine);

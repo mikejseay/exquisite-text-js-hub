@@ -54,30 +54,41 @@ function AllUserInfo({ socket }) {
         // The component then displays all lines sorted by the timestamp at which they were created.
         // we can switch this so that it renders previous lines according to a view
         <div className="user-info">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Turn</th>
-                        <th>Color</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {usersArr.map(val => {
-                    return (
-                        <tr key={val.id}>
-                            <td>{val.name}</td>
-                            <td>{val.role}</td>
-                            <td>{val.turn}</td>
-                            <td>{val.color}</td>
-                        </tr>
-                    )
-                })}
-                </tbody>
-            </table>
+            {usersArr.map(val => {
+                return (
+                    <p key={val.id}>
+                        Your name is {val.name}.
+                        {val.role}
+                        {val.turn}
+                        {val.color}
+                    </p>
+                )
+            })}
         </div>
     );
 }
 
 export default AllUserInfo;
+
+// <table>
+//     <thead>
+//     <tr>
+//         <th>Name</th>
+//         <th>Role</th>
+//         <th>Turn</th>
+//         <th>Color</th>
+//     </tr>
+//     </thead>
+//     <tbody>
+//     {usersArr.map(val => {
+//         return (
+//             <tr key={val.id}>
+//                 <td>{val.name}</td>
+//                 <td>{val.role}</td>
+//                 <td>{val.turn}</td>
+//                 <td>{val.color}</td>
+//             </tr>
+//         )
+//     })}
+//     </tbody>
+// </table>
