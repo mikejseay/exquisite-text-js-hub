@@ -15,6 +15,28 @@
     animation-iteration-count: infinite;
 }
 
+
+/*#container {*/
+/*    !*width: 800px;*!*/
+/*    !*height: 100px;*!*/
+/*    position: relative;*/
+/*}*/
+/*#editable-textarea {*/
+/*    width: 700px;*/
+/*    !*height: 100%;*!*/
+/*    position: absolute;*/
+/*    !*top: 0;*!*/
+/*    left: -250px;*/
+/*}*/
+/*#uneditable-div {*/
+/*    width: 700px;*/
+/*    !*height: 100%;*!*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: -500px;*/
+/*    z-index: 10;*/
+/*}*/
+
 @keyframes blink {
     from {
         opacity: 1;

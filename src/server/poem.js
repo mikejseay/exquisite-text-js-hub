@@ -17,11 +17,13 @@ const uuidv4 = require('uuid').v4; // a function that generates a random uuid fo
 // The poem room holds two global data structures, lines and users.
 
 // The lines object is a set that simply contains all lines together with some metadata.
+let lineEditCurrentVal = '';
 let lines = new Set();
 const poems = new Set();
 
 // The users map is intended to hold user information indexed by the socket connection.
 // the key is the socket, and the value is an object full of info
+// note that a map is ordered -- can you pop?
 const users = new Map();
 
 const maxEditors = 2;
@@ -37,13 +39,16 @@ class Connection {
 
         this.handleUser()
 
-        socket.on('sendAllUserInfo', () => this.sendAllUserInfo());
+        socket.on('sendEachUserTheirInfo', () => this.sendEachUserTheirInfo());
         socket.on('sendUserInfo', () => this.sendUserInfo());
+
+        socket.on('sendAllUserInfoToAll', () => this.sendAllUserInfoToAll());
 
         socket.on('allTurns', () => this.changeTurnsForAll());
 
         // The getLines event will be used by new clients to retrieve all existing finished lines from the server.
         socket.on('getLines', () => this.getLines());
+        socket.on('getLineEdit', () => this.getLineEdit());
 
         // The line event will be triggered by the client whenever a new line has been submitted into the poem.
         socket.on('line', (value) => this.handleLine(value));
@@ -65,20 +70,21 @@ class Connection {
     }
 
     changeTurnsForAll() {
-        turnIndex = (turnIndex + 1) % maxEditors; // goes from 0 to 1 to 2
-        console.log('the turn switched to', turnIndex);
-        function editRole(value, key, map) {
-            if (value['role'] === 'activeEditor') {
-                console.log(value['name'], 'is no longer activeEditor');
-                value['role'] = 'inactiveEditor';
-            } else if (value['role'] === 'inactiveEditor' && turnIndex === value['turn']) {
-                console.log(value['name'], 'is now activeEditor');
-                value['role'] = 'activeEditor';
-            } else {
-                console.log(value['name'], 'didnt change status');
-            }
-        }
-        users.forEach(editRole)
+        turnIndex = (turnIndex + 1) % maxEditors; // cycles through 0 up to maxEditors - 1
+        this.assignRolesOnPrinciples()
+        // console.log('the turn switched to', turnIndex);
+        // function editRole(value, key, map) {
+        //     if (value['role'] === 'activeEditor') {
+        //         console.log(value['name'], 'is no longer activeEditor');
+        //         value['role'] = 'inactiveEditor';
+        //     } else if (value['role'] === 'inactiveEditor' && turnIndex === value['turn']) {
+        //         console.log(value['name'], 'is now activeEditor');
+        //         value['role'] = 'activeEditor';
+        //     } else {
+        //         console.log(value['name'], 'didnt change status');
+        //     }
+        // }
+        // users.forEach(editRole)
     }
 
     clearLines() {
@@ -88,21 +94,22 @@ class Connection {
     poemDone() {
         // this.allUsersSpectators(); // maybe not...
         let poemString = '';
-        for (const [key, value] of lines.entries()) {
-            poemString += value['value'] + '\n';
+        for (let line of lines) {
+            poemString += line['value'] + '\n';
         }
         this.handlePoem(poemString)
         lines.clear();
     }
 
-    allUsersSpectators() {
-        function makeSpectator(value, key, map) {
-            value['role'] = 'spectator';
-        }
-        users.forEach(makeSpectator)
-    }
+    // allUsersSpectators() {
+    //     function makeSpectator(value, key, map) {
+    //         value['role'] = 'spectator';
+    //     }
+    //     users.forEach(makeSpectator)
+    // }
 
-    sendAllUserInfo() {
+    // to be critical: there are multiple pieces of the app that listen for this
+    sendEachUserTheirInfo() {
         for (const [key, value] of users.entries()) {
             this.io.to(key.id).emit('userInfo', value)
         }
@@ -113,33 +120,65 @@ class Connection {
         this.io.to(this.socket.id).emit('userInfo', users.get(this.socket))
     }
 
-    // Handle the initial arrival of the user
-    handleUser() {
-        // decide what the user's role is upon log in
-        // check the current state of the users map and see what sorts of userRoles we have
-        let currentExtantRoles = [];
+    sendAllUserInfoToAll() {
+        this.io.sockets.emit('allUserInfo', Array.from(users.values()));
+    }
+
+    assignRolesOnPrinciples () {
+        console.log('assigning user roles from first principles');
+        let turnCounter = 0;
         for (let userInfoObj of users.values()) {
-            currentExtantRoles.push(userInfoObj.role);
+            userInfoObj['turn'] = turnCounter;
+            if (turnCounter === turnIndex) {
+                userInfoObj['role'] = 'activeEditor';
+            } else if (turnCounter < maxEditors) {
+                userInfoObj['role'] = 'inactiveEditor';
+            } else {
+                userInfoObj['role'] = 'spectator';
+            }
+            turnCounter += 1;
         }
+        // console.log('afterwards it was', users)
+    }
 
-        const nInactiveEditors = currentExtantRoles.reduce(function(n, val) {return n + (val === 'inactiveEditor');}, 0);
-        console.log('there are', nInactiveEditors, 'inactive editors')
+    // Handle the initial arrival of the user
+    // triggers a role-check
+    handleUser() {
+        // // decide what the user's role is upon log in
+        // // check the current state of the users map and see what sorts of userRoles we have
+        // // since users is a map, we automatically iterate through it in order of insertion (first user first)
+        // let currentExtantRoles = [];
+        // let currentExtantTurns = [];
+        // for (let userInfoObj of users.values()) {
+        //     currentExtantRoles.push(userInfoObj.role);
+        //     currentExtantTurns.push(userInfoObj.turn);
+        // }
+        //
+        // const nInactiveEditors = currentExtantRoles.reduce(function(n, val) {return n + (val === 'inactiveEditor');}, 0);
+        // const nSpectators = currentExtantRoles.reduce(function(n, val) {return n + (val === 'spectator');}, 0);
+        //
+        // let proposedRole = 'spectator';
+        // let proposedTurn = nSpectators;  // functions as priority ?
+        // if (!currentExtantRoles.includes('activeEditor')) {
+        //     proposedRole = 'activeEditor';
+        //     proposedTurn = 0;
+        // } else if (nInactiveEditors < (maxEditors - 1)) {
+        //     proposedRole = 'inactiveEditor';
+        //     proposedTurn =
+        // }
 
-        let proposedRole = 'spectator';
-        if (!currentExtantRoles.includes('activeEditor')) {
-            proposedRole = 'activeEditor';
-        } else if (nInactiveEditors < (maxEditors - 1)) {
-            proposedRole = 'inactiveEditor';
-        }
-
-        console.log('got a login attempt and want to set role to', proposedRole);
+        // console.log('at the time of this log in, there are', users.size, 'users with',
+        //     nInactiveEditors, 'inactive editors, want to set role to', proposedRole);
 
         users.set(this.socket, {
+            id: uuidv4(),
             name: randomUserNames.pop(),
-            role: proposedRole,
-            turn: users.size,
+            // role: proposedRole,
+            // turn: users.size,
             color: randomColors.pop(),
         });
+
+        this.assignRolesOnPrinciples();
     }
 
     sendLine(line) {
@@ -151,6 +190,11 @@ class Connection {
     // this is used to bring a new user up to date on what's happening, could be good for Spectator mode
     getLines() {
         lines.forEach((line) => this.sendLine(line));
+    }
+
+    // this is used to bring a new user up to date on what's happening in the lineEdit
+    getLineEdit() {
+        this.io.to(this.socket.id).emit('lineEdit', lineEditCurrentVal);
     }
 
     // When a new line arrives from this Connection, handleMessage() creates a line object and adds it to lines
@@ -172,6 +216,7 @@ class Connection {
     handleLineEdit(value) {
         // this.io.sockets.emit('lineEdit', value);
         this.socket.broadcast.emit('lineEdit', value);
+        lineEditCurrentVal = value;
     }
 
     sendPoem(poem) {
@@ -204,9 +249,17 @@ class Connection {
     }
 
     disconnect() {
+        const thisUserInfo = users.get(this.socket);
+        console.log(thisUserInfo, 'headed out');
+
+        randomUserNames.push(thisUserInfo.name);
+        randomColors.push(thisUserInfo.color);
         users.delete(this.socket);
 
         // update the user roles
+        this.assignRolesOnPrinciples()
+        this.sendEachUserTheirInfo()
+        this.sendAllUserInfoToAll()
     }
 }
 

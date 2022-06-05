@@ -25,6 +25,7 @@ function Lines({ socket }) {
 
         const clearLineListener = () => {
             setLines({});
+            console.log('clearLines was reached once');
         };
 
         const userInfoListener = (userInfo) => {

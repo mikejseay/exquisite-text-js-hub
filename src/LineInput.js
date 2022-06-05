@@ -11,7 +11,6 @@ import './LineInput.css';
 // https://stackoverflow.com/questions/53845595/wrong-react-hooks-behaviour-with-event-listener
 function useStateRef(initialValue) {
     const [value, setValue] = useState(initialValue);
-
     const ref = useRef(value);
 
     useEffect(() => {
@@ -66,6 +65,10 @@ const LineInput = ({ socket }) => {
         // additionally, tell React to set the poem textarea to change
         // whenever a lineEdit event is emitted
         socket.on('lineEdit', lineEditListener);
+
+        // tells the server for this client to do getLineEdit
+        // since this is client-side, it only happens for this client
+        socket.emit('getLineEdit');
 
         return () => {
             socket.off('lineEdit', lineEditListener);
@@ -122,7 +125,8 @@ const LineInput = ({ socket }) => {
             socket.emit('allTurns');
 
             // this client only tell the server to do the sendUserInfo event
-            socket.emit('sendAllUserInfo');
+            socket.emit('sendEachUserTheirInfo');
+            socket.emit('sendAllUserInfoToAll');
 
         }
     }
@@ -142,11 +146,12 @@ const LineInput = ({ socket }) => {
         // in Lines.js to be initialized (an empty object)...
         socket.emit('clearLines');
 
-        // this client only tell the server to do the turn event
+        // trigger the turn event on the server (switch the turn index and assign roles)
         socket.emit('allTurns');
 
-        // this client only tell the server to do the sendUserInfo event
-        socket.emit('sendAllUserInfo');
+        // since roles have changed, we must update user info
+        socket.emit('sendEachUserTheirInfo');
+        socket.emit('sendAllUserInfoToAll');
 
     }
 
@@ -161,10 +166,14 @@ const LineInput = ({ socket }) => {
     }
 
     return (
-        // This is a simple form with only one input element.
+        // the initial idea here was to have a single textarea element that was editable
+        // an alternative idea is to have this element be composed of a non-editable portion
+        // and an editable portion
         <div>
             { lineInputVisible ? (
+                // <div id={'container'}>
                 <textarea
+                    // id={'editable-textarea'}
                     value={poemInput}
                     onChange={handlePoemBodyChange}
                     onKeyPress={handleKeypress}
@@ -173,7 +182,11 @@ const LineInput = ({ socket }) => {
                     autoFocus={true}
                     readOnly={!lineInputEnabled}
                 >
-            </textarea>
+                </textarea>
+                // <div id={'uneditable-div'}>
+                //     Uneditable portion.
+                // </div>
+                // </div>
             ) : (
                 <div className={'input-group'}>
                     <div

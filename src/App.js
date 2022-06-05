@@ -5,6 +5,7 @@ import Lines from './Lines';
 import Poems from './Poems';
 import LineInput from './LineInput';
 import UserInfo from "./UserInfo";
+import AllUserInfo from "./AllUserInfo";
 import './App.css';
 // import express from "express";
 // import path from "path";
@@ -13,8 +14,8 @@ function App() {
 
     const [socket, setSocket] = useState(null);
     useEffect(() => {
-        const serverPath = `/`;
-        // const serverPath = `http://${window.location.hostname}:3000`;
+        // const serverPath = `/`;
+        const serverPath = `http://${window.location.hostname}:3000`;
         const newSocket = io(serverPath);
         setSocket(newSocket);
         return () => newSocket.close();
@@ -53,6 +54,7 @@ function App() {
             </Modal>
             { socket ? (
                 <div className="poem-container">
+                    <AllUserInfo socket={socket} />
                     <UserInfo socket={socket} />
                     <Lines socket={socket} />
                     <LineInput socket={socket} />

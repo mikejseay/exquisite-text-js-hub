@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './UserInfo.css';
+import './AllUserInfo.css';
 
 // note that implicitly, this is where the game state is being communicated
 
@@ -24,30 +24,29 @@ import './UserInfo.css';
 // it should give you the option of joining the queue for a certain amount of time (10 s)
 // if you say no, or don't answer it will give the next spectator the opportunity to join
 
-function UserInfo({ socket }) {
+function AllUserInfo({ socket }) {
 
-    const [name, setName] = useState('');
-    const [role, setRole] = useState('');
-    const [turn, setTurn] = useState('');
+    const [usersArr, setUsersArr] = useState([]);
+    // const updateMap = (k,v) => {
+    //     setMyMap(new Map(myMap.set(k,v)));
+    // }
 
     useEffect(() => {
 
         // Event handlers for the line and the deleteLine events are set up for the Socket.IO connection.
-        const userInfoListener = (userInfo) => {
-            setName(userInfo['name']);
-            setRole(userInfo['role']);
-            setTurn(userInfo['turn']);
+        const allUserInfoListener = (allUserInfo) => {
+            // console.log('incoming', allUserInfo)
+            setUsersArr(allUserInfo);
+            // console.log('after setting', usersArr)
         };
 
-        socket.on('userInfo', userInfoListener);
+        socket.on('allUserInfo', allUserInfoListener);
 
-        // send only this user their info to initially set them up
-        // note that there is a userInfoListener in UserInfo, Lines, and LineInput
-        // is that bad?
-        socket.emit('sendUserInfo');
+        // trigger the server to send all user info
+        socket.emit('sendAllUserInfoToAll');
 
         return () => {
-            socket.off('userInfo', userInfoListener);
+            socket.off('allUserInfo', allUserInfoListener);
         };
     }, [socket]);
 
@@ -55,26 +54,30 @@ function UserInfo({ socket }) {
         // The component then displays all lines sorted by the timestamp at which they were created.
         // we can switch this so that it renders previous lines according to a view
         <div className="user-info">
-            <p>Your name is {name}, your role is {role}, and your turn is {turn}.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Turn</th>
+                        <th>Color</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {usersArr.map(val => {
+                    return (
+                        <tr key={val.id}>
+                            <td>{val.name}</td>
+                            <td>{val.role}</td>
+                            <td>{val.turn}</td>
+                            <td>{val.color}</td>
+                        </tr>
+                    )
+                })}
+                </tbody>
+            </table>
         </div>
     );
 }
 
-export default UserInfo;
-
-// <table>
-//     <tr>
-//         <th>Name</th>
-//         <th>Age</th>
-//         <th>Gender</th>
-//     </tr>
-//     {data.map((val, key) => {
-//         return (
-//             <tr key={key}>
-//                 <td>{val.name}</td>
-//                 <td>{val.age}</td>
-//                 <td>{val.gender}</td>
-//             </tr>
-//         )
-//     })}
-// </table>
+export default AllUserInfo;
