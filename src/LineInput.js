@@ -22,7 +22,7 @@ function useStateRef(initialValue) {
 
 const LineInput = ({ socket }) => {
     const minCharsOnNewLine = 16;       // must have more than this many characters on 2nd line to make exquisite
-    const maxCharsOnNewLine = 32;       // must have less than this many characters on 2nd line to make exquisite
+    const maxCharsOnNewLine = 36;       // must have less than this many characters on 2nd line to make exquisite
     const lineSepString = '\n';
 
     const [poemInput, setPoemInput] = useState('');
@@ -75,6 +75,7 @@ const LineInput = ({ socket }) => {
         socket.emit('getLineEdit');
 
         socket.on('userInfo', userInfoListener);
+        socket.emit('sendUserInfo');
 
         return () => {
             socket.off('lineEdit', lineEditListener);
