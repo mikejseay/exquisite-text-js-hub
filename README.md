@@ -53,4 +53,6 @@ mikejseay@gmail.com
 
 ## Demonstration
 
+Click the ▶ in the top right corner to see a demonstration. Normally, each window would be on a different player's computer!
+
 ![](https://github.com/mikejseay/exquisite-text-js-hub/blob/main/public/exquisiteDemonstrationSmaller.gif)
