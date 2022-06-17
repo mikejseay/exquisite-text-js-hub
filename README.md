@@ -38,7 +38,7 @@ git push heroku main
 ```
 
 
-## 📑 License
+## License
 
 `exquisite-text-js-hub` is licensed under the
 [GNU General Public License v3.0](https://github.com/peterklingelhofer/stream-app/blob/master/LICENSE)
@@ -46,6 +46,11 @@ git push heroku main
 Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.
 
 
-## 📇 Contact
+## Contact
 
 mikejseay@gmail.com
+
+
+## Demonstration
+
+![](https://github.com/mikejseay/exquisite-text-js-hub/blob/main/public/exquisiteDemonstrationSmaller.gif)
