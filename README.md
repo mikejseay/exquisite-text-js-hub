@@ -6,7 +6,7 @@
 
 <div align="center">
   <h3>
-    <a href="https://resonate.is">
+    <a href="https://quiet-garden-15924.herokuapp.com/">
       My Heroku Deploy
     </a>
   </h3>
@@ -41,7 +41,7 @@ git push heroku main
 ## License
 
 `exquisite-text-js-hub` is licensed under the
-[GNU General Public License v3.0](https://github.com/peterklingelhofer/stream-app/blob/master/LICENSE)
+[GNU General Public License v3.0](https://github.com/mikejseay/exquisite-text-js-hub/blob/main/LICENSE)
 
 Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.
 
