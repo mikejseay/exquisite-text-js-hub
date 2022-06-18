@@ -26,7 +26,7 @@ const poems = new Set();
 // note that a map is ordered -- can you pop?
 const users = new Map();
 
-const maxEditors = 2;
+const maxEditors = 4;
 let turnIndex = 0;
 
 // When a user connects, a Connection object will be created for them, which will use their socket to connect
