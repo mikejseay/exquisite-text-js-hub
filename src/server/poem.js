@@ -27,6 +27,7 @@ const poems = new Set();
 const users = new Map();
 
 const maxEditors = 4;
+let nEditors = 0;
 let turnIndex = 0;
 
 // When a user connects, a Connection object will be created for them, which will use their socket to connect
@@ -70,7 +71,7 @@ class Connection {
     }
 
     changeTurnsForAll() {
-        turnIndex = (turnIndex + 1) % maxEditors; // cycles through 0 up to maxEditors - 1
+        turnIndex = (turnIndex + 1) % nEditors; // cycles through 0 up to maxEditors - 1
         this.assignRolesOnPrinciples()
         // console.log('the turn switched to', turnIndex);
         // function editRole(value, key, map) {
@@ -127,12 +128,15 @@ class Connection {
     assignRolesOnPrinciples () {
         console.log('assigning user roles from first principles');
         let turnCounter = 0;
+        nEditors = 0;
         for (let userInfoObj of users.values()) {
             userInfoObj['turn'] = turnCounter;
             if (turnCounter === turnIndex) {
                 userInfoObj['role'] = 'activeEditor';
+                nEditors += 1;
             } else if (turnCounter < maxEditors) {
                 userInfoObj['role'] = 'inactiveEditor';
+                nEditors += 1;
             } else {
                 userInfoObj['role'] = 'spectator';
             }

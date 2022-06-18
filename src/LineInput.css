@@ -1,3 +1,8 @@
+.my-notification {
+    font-family: "Arial", sans-serif;
+    font-size: medium;
+}
+
 .text-spacer {
     white-space: pre-line;
     display: inline-block;

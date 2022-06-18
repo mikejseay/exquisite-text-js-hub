@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Exquisite Text",
+  "name": "Exquisite Text, a collaborative writing game in the browser.",
   "icons": [
     {
       "src": "favicon.ico",

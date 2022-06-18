@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './LineInput.css';
+import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 // if activeEditor, the letters are visible and textarea is editable
 // if inactiveEditor, the letters are invisible, and textarea is not editable
@@ -36,6 +39,10 @@ const LineInput = ({ socket }) => {
     const [lineInputVisible, setLineInputVisible] = useState(false);
     const [lineInputEnabled, setLineInputEnabled] = useState(false);
 
+    const textareaRef = useRef();
+
+    const yourTurnAudio = new Audio(yourTurnSound);
+
     useEffect(() => {
         const lineEditListener = (lineEdit) => {
             setPoemInput(lineEdit);
@@ -46,13 +53,11 @@ const LineInput = ({ socket }) => {
                 setLineInputVisible(true);
                 setLineInputEnabled(true);
                 setDonePoem(true);
-                setDoneLine(false); // was true, but it will become true if formatted correctly
-
-                // console.log(poemInput);
-
-                // const evt = {'target': {'value': poemInput}};
-                // handlePoemBodyChange(evt);
-
+                setDoneLine(false);  // was true, but it will become true if formatted correctly
+                yourTurnAudio.play();  // note this is a promise, won't play on mobile automatically
+                document.title = 'Your turn!';
+                setTimeout(() => document.title = 'Exquisite Text', 3000);
+                NotificationManager.warning('Make the text box have 1.5 lines of text.', 'It\'s your turn!', 3000);
             } else if (userInfo['role'] === 'inactiveEditor') {
                 setLineInputVisible(false);
                 setLineInputEnabled(false);
@@ -182,6 +187,7 @@ const LineInput = ({ socket }) => {
                 // <div id={'container'}>
                 <textarea
                     // id={'editable-textarea'}
+                    ref={textareaRef}
                     value={poemInput}
                     onChange={handlePoemBodyChange}
                     onKeyPress={handleKeypress}
@@ -189,6 +195,7 @@ const LineInput = ({ socket }) => {
                     cols={60}
                     autoFocus={true}
                     readOnly={!lineInputEnabled}
+                    onFocus={() => textareaRef.current === undefined ? ({}) : (textareaRef.current.setSelectionRange(-1, -1))}
                 >
                 </textarea>
                 // <div id={'uneditable-div'}>
@@ -200,7 +207,7 @@ const LineInput = ({ socket }) => {
                     <div
                         autoFocus={true}
                         className={'text-spacer'}
-                    >{'*'.repeat(poemInput.length)}<div id="caret"></div>
+                    >{poemInput.replaceAll(/[^\n]/g, '*')}<div id="caret"></div>
                     </div>
                 </div>
             )}
@@ -211,6 +218,9 @@ const LineInput = ({ socket }) => {
             <button onClick={finishExquisite} disabled={!donePoemEnabled}>
                 Done Poem
             </button>
+            <div className={'my-notification'}>
+                <NotificationContainer/>
+            </div>
         </div>
     );
 };
@@ -223,3 +233,5 @@ export default LineInput;
 // setDoneLine(poemParts.length === 2 &&
 //     poemSecondLine.length > minCharsOnNewLine &&
 //     poemSecondLine.length < maxCharsOnNewLine);
+
+// {'*'.repeat(poemInput.length)}
