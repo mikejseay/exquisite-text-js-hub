@@ -71,7 +71,7 @@ class Connection {
     }
 
     changeTurnsForAll() {
-        turnIndex = (turnIndex + 1) % nEditors; // cycles through 0 up to maxEditors - 1
+        turnIndex = (turnIndex + 1) % nEditors; // cycles through 0 up to nEditors - 1
         this.assignRolesOnPrinciples()
         // console.log('the turn switched to', turnIndex);
         // function editRole(value, key, map) {
@@ -128,17 +128,19 @@ class Connection {
     assignRolesOnPrinciples () {
         console.log('assigning user roles from first principles');
         let turnCounter = 0;
-        nEditors = 0;
+        nEditors = Math.min(users.size, maxEditors);
+        console.log('nEditors', nEditors)
         for (let userInfoObj of users.values()) {
             userInfoObj['turn'] = turnCounter;
             if (turnCounter === turnIndex) {
                 userInfoObj['role'] = 'activeEditor';
-                nEditors += 1;
+                userInfoObj['turnsAway'] = 0;
             } else if (turnCounter < maxEditors) {
                 userInfoObj['role'] = 'inactiveEditor';
-                nEditors += 1;
+                userInfoObj['turnsAway'] = (turnCounter - turnIndex + maxEditors) % maxEditors;
             } else {
                 userInfoObj['role'] = 'spectator';
+                userInfoObj['turnsAway'] = undefined;
             }
             turnCounter += 1;
         }

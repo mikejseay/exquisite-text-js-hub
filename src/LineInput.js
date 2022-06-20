@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
+// import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
 import './LineInput.css';
 
 // if activeEditor, the letters are visible and textarea is editable
@@ -44,9 +44,9 @@ const LineInput = ({ socket }) => {
 
     const textareaRef = useRef();
 
-    const yourTurnAudio = new Audio(yourTurnSound);
+    // const yourTurnAudio = new Audio(yourTurnSound);
 
-    // const [snackMessage, setSnackMessage] = useState('');
+    const [snackMessage, setSnackMessage] = useState('');
     const [snackOpen, setSnackOpen] = useState(false);
     const handleClose = () => {
         setSnackOpen(false);
@@ -61,11 +61,12 @@ const LineInput = ({ socket }) => {
             if (userInfo['role'] === 'activeEditor') {
                 setLineInputVisible(true);
                 setLineInputEnabled(true);
+                setDoneLine(false);
                 setDonePoem(true);
-                setDoneLine(false);  // was true, but it will become true if formatted correctly
-                yourTurnAudio.play();  // note this is a promise, won't play on mobile automatically
+                // yourTurnAudio.play();  // note this is a promise, won't play on mobile automatically
                 document.title = 'Your turn!';
                 setTimeout(() => document.title = 'Exquisite Text', 3000);
+                snackBasedOnTurnsAway(userInfo['turnsAway']);
                 setSnackOpen(true);
                 setTimeout(() => setSnackOpen(false), 3000);
             } else if (userInfo['role'] === 'inactiveEditor') {
@@ -73,6 +74,9 @@ const LineInput = ({ socket }) => {
                 setLineInputEnabled(false);
                 setDoneLine(false);
                 setDonePoem(false);
+                snackBasedOnTurnsAway(userInfo['turnsAway']);
+                setSnackOpen(true);
+                setTimeout(() => setSnackOpen(false), 3000);
             } else if (userInfo['role'] === 'spectator') {
                 setLineInputVisible(true);
                 setLineInputEnabled(false);
@@ -98,13 +102,25 @@ const LineInput = ({ socket }) => {
         };
     }, [socket]);
 
+    function snackBasedOnTurnsAway(turnsAway) {
+        if (turnsAway === 0) {
+            setSnackMessage("It's your turn!");
+        } else if (turnsAway === 1) {
+            setSnackMessage("You go next!");
+        } else if (turnsAway === undefined) {
+            setSnackMessage("You spectate something exquisite");
+        } else {
+            setSnackMessage("You're up in " + turnsAway.toString() + " turns.");
+        }
+
+    }
+
     function sendNotification (msg) {
         setInputErrorMsg(msg);
         setTimeout(() => setInputErrorMsg(lineSepString), 3000);
     }
 
     function setMessageBasedOnProgress () {
-        console.log('progress: ', progress)
     }
 
     // handles any change to the textarea element. written to be as fast as possible, so a bit verbose
@@ -233,14 +249,14 @@ const LineInput = ({ socket }) => {
         // an alternative idea is to have this element be composed of a non-editable portion
         // and an editable portion
         <div>
+            <Snackbar
+                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                open={snackOpen}
+                onClose={handleClose}
+                message={snackMessage}
+            />
             { lineInputVisible ? (
                 <div>
-                <Snackbar
-                    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-                    open={snackOpen}
-                    onClose={handleClose}
-                    message="It's your turn!"
-                />
                 <div className={'error-msg'}>
                     {inputErrorMsg}
                 </div>

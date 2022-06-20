@@ -74,7 +74,7 @@ function GameState({ socket }) {
                             <th>Name</th>
                             <th>Role</th>
                             <th>Turn</th>
-                            <th>Color</th>
+                            <th>TurnsAway</th>
                             <th>You?</th>
                         </tr>
                         </thead>
@@ -85,7 +85,7 @@ function GameState({ socket }) {
                                     <td>{val.name}</td>
                                     <td>{val.role}</td>
                                     <td>{val.turn}</td>
-                                    <td>{val.color}</td>
+                                    <td>{val.turnsAway}</td>
                                     <td>{val.turn === turn ? ('yes') : ('no')}</td>
                                 </tr>
                             )
