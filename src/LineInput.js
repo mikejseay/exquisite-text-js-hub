@@ -24,8 +24,9 @@ function useStateRef(initialValue) {
 }
 
 const LineInput = ({ socket }) => {
-    const minCharsOnNewLine = 16;       // must have more than this many characters on 2nd line to make exquisite
-    const maxCharsOnNewLine = 36;       // must have less than this many characters on 2nd line to make exquisite
+    const minCharsOnLineOne = 30;
+    const minCharsOnLineTwo = 16;       // must have more than this many characters on 2nd line to make exquisite
+    const maxCharsOnLineTwo = 36;       // must have less than this many characters on 2nd line to make exquisite
     const lineSepString = '\n';
 
     const [poemInput, setPoemInput] = useState('');
@@ -38,6 +39,8 @@ const LineInput = ({ socket }) => {
     const [donePoemEnabled, setDonePoem] = useState(true);
     const [lineInputVisible, setLineInputVisible] = useState(false);
     const [lineInputEnabled, setLineInputEnabled] = useState(false);
+    const [messageType, setMessageType] = useState(1);
+    const [progress, setProgress] = useState(1);
 
     const textareaRef = useRef();
 
@@ -88,32 +91,71 @@ const LineInput = ({ socket }) => {
         };
     }, [socket]);
 
-    // one for the poem body
-    // handles any change to poem body, a ContentEditable div object (user entered a new character or deleted one)
+    function sendNotification (msg) {
+        console.log('msg:', msg);
+    }
+
+    function setMessageBasedOnProgress () {
+        console.log('progress: ', progress)
+    }
+
+    // handles any change to the textarea element. written to be as fast as possible, so a bit verbose
     function handlePoemBodyChange(evt) {
-        // console.log(evt);
         evt.preventDefault();
 
-        // broadcast that there was a change
-        // this broadcasts to everyone including the sender
-        setPoemInput(evt.target.value);                         // heroku
-        socket.emit('lineEdit', evt.target.value);              // heroku
+        const lines = evt.target.value.split(lineSepString);
 
-        // socket.emit('lineEdit', evt.target.value);           // local
+        if (lines.length === 1) {  // only one line
 
-        // splitting it into its lines
-        const poemParts = evt.target.value.split(lineSepString);
+            setPoemInput(evt.target.value);
+            socket.emit('lineEdit', evt.target.value);
+            setMessageType(1);
+            setProgress(evt.target.value.length / 60);
+            setDoneLine(false);
 
-        if (poemParts.length < 2) {
-            return
+        } else if (lines.length === 2) {
+
+            if (lines[1].length > maxCharsOnLineTwo) {  // second line too long
+
+                const useInput = lines[0] + lineSepString + lines[1].slice(0, maxCharsOnLineTwo)
+                setPoemInput(useInput);
+                socket.emit('lineEdit', useInput);
+                sendNotification('Less on second line!');
+                setMessageType(2);
+                setProgress(maxCharsOnLineTwo / 30);
+                setDoneLine(true);
+
+            } else if (lines[0].length < minCharsOnLineOne) {  // first line too short
+
+                setPoemInput(lines[0]);
+                socket.emit('lineEdit', lines[0]);
+                sendNotification('More on first line!');
+                setMessageType(1);
+                setProgress(lines[0].length / 60);
+                setDoneLine(false);
+
+            } else {  // just right!
+
+                setPoemInput(evt.target.value);
+                socket.emit('lineEdit', evt.target.value);
+                setMessageType(2);
+                setProgress(lines[1].length / 30);
+                setDoneLine(lines[1].length > minCharsOnLineTwo && lines[1].length < maxCharsOnLineTwo);
+
+            }
+        } else {  // more than 2 lines somehow (e.g. large copy-paste)
+
+            const useInput = lines[0] + lineSepString + lines[1].slice(0, maxCharsOnLineTwo)
+            setPoemInput(useInput);
+            socket.emit('lineEdit', useInput);
+            sendNotification('Too much input!');
+            setMessageType(2);
+            setProgress(maxCharsOnLineTwo / 30);
+            setDoneLine(true);
+
         }
 
-        const poemSecondLine = poemParts[1].trim();
-
-        // only enable the button if there are 2 lines AND the 2nd line is between 20 and 40 characters
-        setDoneLine(poemParts.length === 2 &&
-            poemSecondLine.length > minCharsOnNewLine &&
-            poemSecondLine.length < maxCharsOnNewLine);
+        setMessageBasedOnProgress();
     }
 
     function makeExquisite() {
