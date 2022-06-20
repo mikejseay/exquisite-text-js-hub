@@ -1,0 +1,14 @@
+.tutorial {
+    margin-right: auto;
+}
+
+.help-modal {
+    text-align: center;
+    white-space: pre-line;
+    font-size: 18px;
+}
+
+.center-button {
+    margin:0 auto;
+    display:block;
+}

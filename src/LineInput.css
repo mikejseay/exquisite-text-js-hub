@@ -1,3 +1,13 @@
+textarea {
+    outline: none;
+    font-family: "Libre Baskerville", serif;
+    font-size: 18px;
+    text-align: center;
+    resize: none;
+    line-height: 150%;
+    cursor:text;
+}
+
 .my-notification {
     font-family: "Arial", sans-serif;
     font-size: medium;

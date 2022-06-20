@@ -1,14 +1,13 @@
 import React, { useEffect, useState} from 'react';
-import Modal from 'react-modal';
 import io from 'socket.io-client';
 import Lines from './Lines';
 import Poems from './Poems';
 import LineInput from './LineInput';
-import UserInfo from "./UserInfo";
+import GameState from './GameState';
+import Tutorial from './Tutorial';
+import Settings from './Settings';
+
 import './App.css';
-// import AllUserInfo from "./AllUserInfo";
-// import express from "express";
-// import path from "path";
 
 function App() {
 
@@ -21,39 +20,24 @@ function App() {
         return () => newSocket.close();
     }, [setSocket]);
 
-    // whether the modal help window is open
-    const [helpOpen, setHelpOpen] = useState(false);
-    function toggleHelpModal() {
-        setHelpOpen(!helpOpen)
-    }
-
     // The component then renders a page that contains a header.
     // If a socket has already been established, it will also render two components Lines and LineInput.
     // Both of these components need the socket to work, so it is being passed in as a parameter.
     return (
-        <div className="App">
-            <header className="app-header">
-                <button onClick={toggleHelpModal}>
-                    Help
-                </button>
-            </header>
-            <Modal
-                isOpen={helpOpen}
-                onRequestClose={toggleHelpModal}
-                contentLabel="Help Dialog Modal"
-            >
-                <button onClick={toggleHelpModal} className='center-button'>Close</button>
-                <div className='help-modal'>{'\n'}Write a line and a half of poetry.{'\n'}
-                    That is, when the first line is finished, press enter and write another half-line.{'\n'}
-                    Once your input is suitable, press the 'Done Line' button.{'\n'}
-                    If you feel the poem has been finished, press the 'Done Poem' button.{'\n'}</div>
-            </Modal>
+        <div className={'possible-socket'}>
             { socket ? (
-                <div className="poem-container">
-                    <UserInfo socket={socket} />
-                    <Lines socket={socket} />
-                    <LineInput socket={socket} />
-                    <Poems socket={socket} />
+                <div className='app'>
+                    <header className={'app-header'}>
+                        <Tutorial/>
+                        <div className={'app-title'}>Exquisite Text</div>
+                        <GameState socket={socket} />
+                        <Settings socket={socket} />
+                    </header>
+                    <div className={'poem-container'}>
+                        <Lines socket={socket} />
+                        <LineInput socket={socket} />
+                        <Poems socket={socket} />
+                    </div>
                 </div>
             ) : (
                 <div>Not Connected</div>

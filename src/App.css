@@ -11,13 +11,11 @@
   padding: 10px;
   background-color: #282c34;
   color: white;
-}
-
-.app-header > div {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  flex-wrap: nowrap;
   justify-content: space-between;
+  align-items: center;
 }
 
 .poem-container {
@@ -30,27 +28,10 @@
   text-align: center;
 }
 
-.poem-body {
-  white-space: pre-line;
-}
-
-textarea {
-  outline: none;
+.app-title {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
   font-family: "Libre Baskerville", serif;
-  font-size: 18px;
-  text-align: center;
-  resize: none;
-  line-height: 150%;
-  cursor:text;
-}
-
-.center-button {
-  margin:0 auto;
-  display:block;
-}
-
-.help-modal {
-  text-align: center;
-  white-space: pre-line;
-  font-size: 18px;
+  font-size: 24px;
 }
