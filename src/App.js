@@ -13,8 +13,8 @@ function App() {
 
     const [socket, setSocket] = useState(null);
     useEffect(() => {
-        // const serverPath = `/`;
-        const serverPath = `http://${window.location.hostname}:3000`;
+        const serverPath = `/`;
+        // const serverPath = `http://${window.location.hostname}:3000`;
         const newSocket = io(serverPath);
         setSocket(newSocket);
         return () => newSocket.close();
