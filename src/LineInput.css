@@ -20,6 +20,11 @@
     animation-iteration-count: infinite;
 }
 
+.error-msg {
+    font-size: small;
+    color: red;
+    white-space: pre-line;
+}
 
 /*#container {*/
 /*    !*width: 800px;*!*/

@@ -30,17 +30,18 @@ const LineInput = ({ socket }) => {
     const lineSepString = '\n';
 
     const [poemInput, setPoemInput] = useState('');
-    // const [poemInput, setPoemInput, poemInputRef] = useStateRef('');
 
     // a single boolean that determines whether the "Done Line" button should be enabled or disabled
     // it toggles based on the suitability of the current poem body to be made exquisite
     // we need an additional doneLineRef object that allows us to get its current state
     const [doneLineEnabled, setDoneLine, doneLineRef] = useStateRef(true);
+
     const [donePoemEnabled, setDonePoem] = useState(true);
     const [lineInputVisible, setLineInputVisible] = useState(false);
     const [lineInputEnabled, setLineInputEnabled] = useState(false);
     const [messageType, setMessageType] = useState(1);
-    const [progress, setProgress] = useState(1);
+    const [progress, setProgress] = useState(0);
+    const [inputErrorMsg, setInputErrorMsg] = useState(lineSepString);
 
     const textareaRef = useRef();
 
@@ -92,7 +93,8 @@ const LineInput = ({ socket }) => {
     }, [socket]);
 
     function sendNotification (msg) {
-        console.log('msg:', msg);
+        setInputErrorMsg(msg);
+        setTimeout(() => setInputErrorMsg(lineSepString), 3000);
     }
 
     function setMessageBasedOnProgress () {
@@ -140,7 +142,7 @@ const LineInput = ({ socket }) => {
                 socket.emit('lineEdit', evt.target.value);
                 setMessageType(2);
                 setProgress(lines[1].length / 30);
-                setDoneLine(lines[1].length > minCharsOnLineTwo && lines[1].length < maxCharsOnLineTwo);
+                setDoneLine(lines[1].length >= minCharsOnLineTwo && lines[1].length <= maxCharsOnLineTwo);
 
             }
         } else {  // more than 2 lines somehow (e.g. large copy-paste)
@@ -226,9 +228,11 @@ const LineInput = ({ socket }) => {
         // and an editable portion
         <div>
             { lineInputVisible ? (
-                // <div id={'container'}>
+                <div>
+                <div className={'error-msg'}>
+                    {inputErrorMsg}
+                </div>
                 <textarea
-                    // id={'editable-textarea'}
                     ref={textareaRef}
                     value={poemInput}
                     onChange={handlePoemBodyChange}
@@ -240,10 +244,7 @@ const LineInput = ({ socket }) => {
                     onFocus={() => textareaRef.current === undefined ? ({}) : (textareaRef.current.setSelectionRange(-1, -1))}
                 >
                 </textarea>
-                // <div id={'uneditable-div'}>
-                //     Uneditable portion.
-                // </div>
-                // </div>
+                </div>
             ) : (
                 <div className={'input-group'}>
                     <div

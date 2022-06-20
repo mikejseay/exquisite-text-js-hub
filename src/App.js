@@ -30,10 +30,6 @@ function App() {
     // The component then renders a page that contains a header.
     // If a socket has already been established, it will also render two components Lines and LineInput.
     // Both of these components need the socket to work, so it is being passed in as a parameter.
-
-    // The header shows the authentication state.
-    // If a user is logged on, it will show the user’s name, and a Sign-out button;
-    // otherwise, it will show that the user is not signed in and show a Sign-in button that lets the user log in.
     return (
         <div className="App">
             <header className="app-header">
@@ -54,7 +50,6 @@ function App() {
             </Modal>
             { socket ? (
                 <div className="poem-container">
-                    {/*<AllUserInfo socket={socket} />*/}
                     <UserInfo socket={socket} />
                     <Lines socket={socket} />
                     <LineInput socket={socket} />
