@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './LineInput.css';
+import Snackbar from '@mui/material/Snackbar';
 import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
-import {NotificationContainer, NotificationManager} from 'react-notifications';
-import 'react-notifications/lib/notifications.css';
+import './LineInput.css';
 
 // if activeEditor, the letters are visible and textarea is editable
 // if inactiveEditor, the letters are invisible, and textarea is not editable
@@ -47,6 +46,12 @@ const LineInput = ({ socket }) => {
 
     const yourTurnAudio = new Audio(yourTurnSound);
 
+    // const [snackMessage, setSnackMessage] = useState('');
+    const [snackOpen, setSnackOpen] = useState(false);
+    const handleClose = () => {
+        setSnackOpen(false);
+    };
+
     useEffect(() => {
         const lineEditListener = (lineEdit) => {
             setPoemInput(lineEdit);
@@ -61,7 +66,8 @@ const LineInput = ({ socket }) => {
                 yourTurnAudio.play();  // note this is a promise, won't play on mobile automatically
                 document.title = 'Your turn!';
                 setTimeout(() => document.title = 'Exquisite Text', 3000);
-                NotificationManager.warning('Make the text box have 1.5 lines of text.', 'It\'s your turn!', 3000);
+                setSnackOpen(true);
+                setTimeout(() => setSnackOpen(false), 3000);
             } else if (userInfo['role'] === 'inactiveEditor') {
                 setLineInputVisible(false);
                 setLineInputEnabled(false);
@@ -229,6 +235,12 @@ const LineInput = ({ socket }) => {
         <div>
             { lineInputVisible ? (
                 <div>
+                <Snackbar
+                    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                    open={snackOpen}
+                    onClose={handleClose}
+                    message="It's your turn!"
+                />
                 <div className={'error-msg'}>
                     {inputErrorMsg}
                 </div>
@@ -261,9 +273,6 @@ const LineInput = ({ socket }) => {
             <button onClick={finishExquisite} disabled={!donePoemEnabled}>
                 Done Poem
             </button>
-            <div className={'my-notification'}>
-                <NotificationContainer/>
-            </div>
         </div>
     );
 };
