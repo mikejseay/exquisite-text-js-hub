@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Modal from '@mui/material/Modal';
 import './Tutorial.css';
@@ -27,7 +27,7 @@ const Tutorial = () => {
 
     return (
         <div className={'tutorial'}>
-        <IconButton aria-label="info" onClick={handleHelpOpen}>
+        <IconButton aria-label="info" onClick={handleHelpOpen} size={'large'}>
             <InfoOutlinedIcon />
         </IconButton>
         <Modal

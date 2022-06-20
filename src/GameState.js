@@ -1,14 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import Modal from "react-modal";
+import Popover from '@mui/material/Popover';
+import PeopleIcon from '@mui/icons-material/People';
+import IconButton from '@mui/material/IconButton';
 import './GameState.css';
 
 function GameState({ socket }) {
 
-    // whether the modal window is open
-    const [gameStateOpen, setGameStateOpen] = useState(false);
-    function toggleGameStateModal() {
-        setGameStateOpen(!gameStateOpen);
-    }
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
 
     const [name, setName] = useState('');
     const [role, setRole] = useState('');
@@ -48,15 +57,19 @@ function GameState({ socket }) {
 
     return (
         <div className={'game-state'}>
-            <button onClick={toggleGameStateModal}>
-                🎲
-            </button>
-            <Modal
-                isOpen={gameStateOpen}
-                onRequestClose={toggleGameStateModal}
-                contentLabel="Help Dialog Modal"
+            <IconButton aria-label="players" onClick={handleClick} size={'large'}>
+                <PeopleIcon />
+            </IconButton>
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
             >
-                <button onClick={toggleGameStateModal} className='center-button'>Close</button>
                 <div className={'user-info'}>
                     <table>
                         <thead>
@@ -84,7 +97,7 @@ function GameState({ socket }) {
                     </table>
                     <p>Your name is {name}, your role is {role}, and your turn is {turn}.</p>
                 </div>
-            </Modal>
+            </Popover>
         </div>
     );
 }
