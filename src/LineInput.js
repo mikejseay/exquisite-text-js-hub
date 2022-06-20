@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Snackbar from '@mui/material/Snackbar';
+import Button from '@mui/material/Button';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 // import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
 import './LineInput.css';
 
@@ -126,7 +133,7 @@ const LineInput = ({ socket }) => {
         if (messageType === 1) {
             if (progressProp < .3) {
                 setHelpMessage('Write a line of poetry.');
-            } else if (progressProp < .6) {
+            } else if (progressProp < .8) {
                 setHelpMessage("That's it, keep going!");
             } else {
                 setHelpMessage('Go to next line when ready ⏎');
@@ -314,12 +321,39 @@ const LineInput = ({ socket }) => {
                 </div>
             )}
             <br></br>
-            <button onClick={makeExquisite} disabled={!doneLineEnabled}>
-                Done Line
-            </button>
-            <button onClick={finishExquisite} disabled={!donePoemEnabled}>
-                Done Poem
-            </button>
+            {doneLineEnabled ? (
+                <div className={'pass-button'}>
+                    <Button
+                        variant={'contained'}
+                        onClick={makeExquisite}
+                        disabled={!doneLineEnabled}>
+                        Pass
+                    </Button>
+                </div>
+            ) : (
+                <div className={'pass-button'}></div>
+            )
+            }
+            <Accordion>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
+                    <Typography><strong>Does the poem seem like it's done?</strong></Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Typography>
+                        Only press this button if you're absolutely certain the poem is done!
+                    </Typography>
+                    <Button
+                        variant={'contained'}
+                        onClick={finishExquisite}
+                        disabled={!donePoemEnabled}>
+                        Complete Poem
+                    </Button>
+                </AccordionDetails>
+            </Accordion>
         </div>
     );
 };

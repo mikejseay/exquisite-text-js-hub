@@ -31,6 +31,15 @@
     white-space: pre-line;
 }
 
+.pass-button {
+    min-height: 40px;
+    margin-bottom: 1em;
+}
+
+.help-message {
+    font-family: sans-serif;
+}
+
 /*#container {*/
 /*    !*width: 800px;*!*/
 /*    !*height: 100px;*!*/

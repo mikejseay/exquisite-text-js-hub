@@ -137,7 +137,7 @@ class Connection {
                 userInfoObj['turnsAway'] = 0;
             } else if (turnCounter < maxEditors) {
                 userInfoObj['role'] = 'inactiveEditor';
-                userInfoObj['turnsAway'] = (turnCounter - turnIndex + maxEditors) % maxEditors;
+                userInfoObj['turnsAway'] = (turnCounter - turnIndex + nEditors) % nEditors;
             } else {
                 userInfoObj['role'] = 'spectator';
                 userInfoObj['turnsAway'] = undefined;
@@ -150,31 +150,6 @@ class Connection {
     // Handle the initial arrival of the user
     // triggers a role-check
     handleUser() {
-        // // decide what the user's role is upon log in
-        // // check the current state of the users map and see what sorts of userRoles we have
-        // // since users is a map, we automatically iterate through it in order of insertion (first user first)
-        // let currentExtantRoles = [];
-        // let currentExtantTurns = [];
-        // for (let userInfoObj of users.values()) {
-        //     currentExtantRoles.push(userInfoObj.role);
-        //     currentExtantTurns.push(userInfoObj.turn);
-        // }
-        //
-        // const nInactiveEditors = currentExtantRoles.reduce(function(n, val) {return n + (val === 'inactiveEditor');}, 0);
-        // const nSpectators = currentExtantRoles.reduce(function(n, val) {return n + (val === 'spectator');}, 0);
-        //
-        // let proposedRole = 'spectator';
-        // let proposedTurn = nSpectators;  // functions as priority ?
-        // if (!currentExtantRoles.includes('activeEditor')) {
-        //     proposedRole = 'activeEditor';
-        //     proposedTurn = 0;
-        // } else if (nInactiveEditors < (maxEditors - 1)) {
-        //     proposedRole = 'inactiveEditor';
-        //     proposedTurn =
-        // }
-
-        // console.log('at the time of this log in, there are', users.size, 'users with',
-        //     nInactiveEditors, 'inactive editors, want to set role to', proposedRole);
 
         users.set(this.socket, {
             id: uuidv4(),
