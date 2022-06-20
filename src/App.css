@@ -9,8 +9,6 @@
 
 .app-header {
   padding: 10px;
-  background-color: #282c34;
-  color: white;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;

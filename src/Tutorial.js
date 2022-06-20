@@ -1,30 +1,52 @@
 import React, {useState} from 'react';
-import Modal from "react-modal";
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Modal from '@mui/material/Modal';
 import './Tutorial.css';
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
 
 const Tutorial = () => {
 
     // whether the modal window is open
     const [helpOpen, setHelpOpen] = useState(false);
-    function toggleHelpModal() {
-        setHelpOpen(!helpOpen);
-    }
+    const handleHelpOpen = () => setHelpOpen(true);
+    const handleHelpClose = () => setHelpOpen(false);
 
     return (
         <div className={'tutorial'}>
-        <button onClick={toggleHelpModal}>
-            ℹ
-        </button>
+        <IconButton aria-label="info" onClick={handleHelpOpen}>
+            <InfoOutlinedIcon />
+        </IconButton>
         <Modal
-            isOpen={helpOpen}
-            onRequestClose={toggleHelpModal}
-            contentLabel="Help Dialog Modal"
+            open={helpOpen}
+            onClose={handleHelpClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
         >
-            <button onClick={toggleHelpModal} className='center-button'>Close</button>
-            <div className='help-modal'>{'\n'}Write a line and a half of poetry.{'\n'}
-                That is, when the first line is finished, press enter and write another half-line.{'\n'}
-                Once your input is suitable, press the 'Done Line' button.{'\n'}
-                If you feel the poem has been finished, press the 'Done Poem' button.{'\n'}</div>
+            <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                    Exquisite Text Tutorial
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    Write a line and a half of poetry.
+                    That is, when the first line is finished, press enter and write another half-line.
+                    Once your input is suitable, press the 'Done Line' button.
+                    If you feel the poem has been finished, press the 'Done Poem' button.
+                </Typography>
+            </Box>
         </Modal>
         </div>
     )
