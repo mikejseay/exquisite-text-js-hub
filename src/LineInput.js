@@ -26,6 +26,8 @@ const LineInput = ({ socket }) => {
     const minCharsOnLineOne = 30;
     const minCharsOnLineTwo = 16;       // must have more than this many characters on 2nd line to make exquisite
     const maxCharsOnLineTwo = 36;       // must have less than this many characters on 2nd line to make exquisite
+    const idealCharsOnLineOne = 60;
+    const idealCharsOnLineTwo = 30;
     const lineSepString = '\n';
 
     const [poemInput, setPoemInput] = useState('');
@@ -38,10 +40,12 @@ const LineInput = ({ socket }) => {
     const [donePoemEnabled, setDonePoem] = useState(true);
     const [lineInputVisible, setLineInputVisible] = useState(false);
     const [lineInputEnabled, setLineInputEnabled] = useState(false);
-    const [messageType, setMessageType] = useState(1);
-    const [progress, setProgress] = useState(0);
-    const [inputErrorMsg, setInputErrorMsg] = useState(lineSepString);
 
+    const [helpMessage, setHelpMessage] = useState('');
+    // const [messageType, setMessageType] = useState(1);
+    // const [progress, setProgress] = useState(0);
+
+    const [inputErrorMsg, setInputErrorMsg] = useState(lineSepString);
     const textareaRef = useRef();
 
     // const yourTurnAudio = new Audio(yourTurnSound);
@@ -59,6 +63,7 @@ const LineInput = ({ socket }) => {
 
         const userInfoListener = (userInfo) => {
             if (userInfo['role'] === 'activeEditor') {
+                setHelpMessage('Complete a line of poetry.');
                 setLineInputVisible(true);
                 setLineInputEnabled(true);
                 setDoneLine(false);
@@ -70,6 +75,7 @@ const LineInput = ({ socket }) => {
                 setSnackOpen(true);
                 setTimeout(() => setSnackOpen(false), 3000);
             } else if (userInfo['role'] === 'inactiveEditor') {
+                setHelpMessage('Your friend is writing 👇');
                 setLineInputVisible(false);
                 setLineInputEnabled(false);
                 setDoneLine(false);
@@ -78,6 +84,7 @@ const LineInput = ({ socket }) => {
                 setSnackOpen(true);
                 setTimeout(() => setSnackOpen(false), 3000);
             } else if (userInfo['role'] === 'spectator') {
+                setHelpMessage('Your friends are writing 👇');
                 setLineInputVisible(true);
                 setLineInputEnabled(false);
                 setDoneLine(false);
@@ -112,15 +119,30 @@ const LineInput = ({ socket }) => {
         } else {
             setSnackMessage("You're up in " + turnsAway.toString() + " turns.");
         }
+    }
 
+    function helpBasedOnProgress (messageType, progressProp) {
+
+        if (messageType === 1) {
+            if (progressProp < .3) {
+                setHelpMessage('Write a line of poetry.');
+            } else if (progressProp < .6) {
+                setHelpMessage("That's it, keep going!");
+            } else {
+                setHelpMessage('Go to next line when ready ⏎');
+            }
+        } else {
+            if (progressProp < .6) {
+                setHelpMessage('Now start the next line (Next player will see this.)');
+            } else {
+                setHelpMessage('Perfect. Pass the turn!');
+            }
+        }
     }
 
     function sendNotification (msg) {
         setInputErrorMsg(msg);
         setTimeout(() => setInputErrorMsg(lineSepString), 3000);
-    }
-
-    function setMessageBasedOnProgress () {
     }
 
     // handles any change to the textarea element. written to be as fast as possible, so a bit verbose
@@ -133,8 +155,9 @@ const LineInput = ({ socket }) => {
 
             setPoemInput(evt.target.value);
             socket.emit('lineEdit', evt.target.value);
-            setMessageType(1);
-            setProgress(evt.target.value.length / 60);
+            // setMessageType(1);
+            // setProgress(evt.target.value.length / idealCharsOnLineOne);
+            helpBasedOnProgress(1, evt.target.value.length / idealCharsOnLineOne);
             setDoneLine(false);
 
         } else if (lines.length === 2) {
@@ -145,8 +168,9 @@ const LineInput = ({ socket }) => {
                 setPoemInput(useInput);
                 socket.emit('lineEdit', useInput);
                 sendNotification('Less on second line!');
-                setMessageType(2);
-                setProgress(maxCharsOnLineTwo / 30);
+                // setMessageType(2);
+                // setProgress(maxCharsOnLineTwo / idealCharsOnLineTwo);
+                helpBasedOnProgress(2, maxCharsOnLineTwo / idealCharsOnLineTwo);
                 setDoneLine(true);
 
             } else if (lines[0].length < minCharsOnLineOne) {  // first line too short
@@ -154,32 +178,34 @@ const LineInput = ({ socket }) => {
                 setPoemInput(lines[0]);
                 socket.emit('lineEdit', lines[0]);
                 sendNotification('More on first line!');
-                setMessageType(1);
-                setProgress(lines[0].length / 60);
+                // setMessageType(1);
+                // setProgress(lines[0].length / idealCharsOnLineOne);
+                helpBasedOnProgress(1, lines[0].length / idealCharsOnLineOne);
                 setDoneLine(false);
 
             } else {  // just right!
 
                 setPoemInput(evt.target.value);
                 socket.emit('lineEdit', evt.target.value);
-                setMessageType(2);
-                setProgress(lines[1].length / 30);
+                // setMessageType(2);
+                // setProgress(lines[1].length / idealCharsOnLineTwo);
+                helpBasedOnProgress(2, lines[1].length / idealCharsOnLineTwo);
                 setDoneLine(lines[1].length >= minCharsOnLineTwo && lines[1].length <= maxCharsOnLineTwo);
 
             }
+
         } else {  // more than 2 lines somehow (e.g. large copy-paste)
 
             const useInput = lines[0] + lineSepString + lines[1].slice(0, maxCharsOnLineTwo)
             setPoemInput(useInput);
             socket.emit('lineEdit', useInput);
             sendNotification('Too much input!');
-            setMessageType(2);
-            setProgress(maxCharsOnLineTwo / 30);
+            helpBasedOnProgress(2, maxCharsOnLineTwo / idealCharsOnLineTwo);
+            // setMessageType(2);
+            // setProgress(maxCharsOnLineTwo / idealCharsOnLineTwo);
             setDoneLine(true);
 
         }
-
-        setMessageBasedOnProgress();
     }
 
     function makeExquisite() {
@@ -255,26 +281,31 @@ const LineInput = ({ socket }) => {
                 onClose={handleClose}
                 message={snackMessage}
             />
+            <div className={'help-message'}>
+                {helpMessage}
+            </div>
             { lineInputVisible ? (
-                <div>
-                <div className={'error-msg'}>
-                    {inputErrorMsg}
-                </div>
-                <textarea
-                    ref={textareaRef}
-                    value={poemInput}
-                    onChange={handlePoemBodyChange}
-                    onKeyPress={handleKeypress}
-                    rows={2}
-                    cols={60}
-                    autoFocus={true}
-                    readOnly={!lineInputEnabled}
-                    onFocus={() => textareaRef.current === undefined ? ({}) : (textareaRef.current.setSelectionRange(-1, -1))}
-                >
-                </textarea>
+                <div className={'poem-input-container'}>
+                    <div className={'error-msg'}>
+                        {inputErrorMsg}
+                    </div>
+                    <textarea
+                        className={'poem-input'}
+                        ref={textareaRef}
+                        value={poemInput}
+                        onChange={handlePoemBodyChange}
+                        onKeyPress={handleKeypress}
+                        rows={2}
+                        cols={idealCharsOnLineOne}
+                        autoFocus={true}
+                        readOnly={!lineInputEnabled}
+                        onFocus={() => textareaRef.current === undefined ? ({}) : (textareaRef.current.setSelectionRange(-1, -1))}
+                    >
+                    </textarea>
                 </div>
             ) : (
                 <div className={'input-group'}>
+                    <br></br>
                     <div
                         autoFocus={true}
                         className={'text-spacer'}
