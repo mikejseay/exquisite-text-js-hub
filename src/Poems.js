@@ -42,8 +42,8 @@ function Poems({ socket }) {
                             key={poem.id}
                             className='poem-container'
                         >
-                            <span className='poem-title'>{poem.title}</span><br></br>
-                            <span className='poem'>{poem.poemString}</span>
+                            <div className='poem-title'>{poem.title}</div>
+                            <div className='poem'>{poem.poemString}</div>
                         </div>
                     ))}
         </div>

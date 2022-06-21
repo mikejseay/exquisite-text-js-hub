@@ -1,5 +1,7 @@
-.poem-body {
-    white-space: pre-line;
+.poems-body {
+    /*flex-grow: 1;*/
+    margin-top: auto;
+    margin-bottom: 2em;
 }
 
 .poem-list {
@@ -8,10 +10,11 @@
 }
 
 .poem-container {
-    display: flex;
-    flex-direction: row;
-    padding: 0.25rem;
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*padding: 0.25rem;*/
     /*border-bottom: 1px solid #eeeeee;*/
+    text-align: center;
 }
 
 .user, .date {
@@ -24,7 +27,11 @@
 }
 
 .poem {
-    flex-grow: 1;
     line-height: 1.5em;
     white-space: pre-line;
+}
+
+.poem-title {
+    margin-top: 1em;
+    margin-bottom: 1em;
 }

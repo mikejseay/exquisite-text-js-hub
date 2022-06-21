@@ -11,6 +11,7 @@ function Lines({ socket }) {
     const [lines, setLines] = useState({});
 
     const [linesVisible, setLinesVisible] = useState(false);
+    const [helpMessage, setHelpMessage] = useState('');
 
     useEffect(() => {
 
@@ -31,10 +32,13 @@ function Lines({ socket }) {
         const userInfoListener = (userInfo) => {
             if (userInfo['role'] === 'activeEditor') {
                 setLinesVisible(false);
+                setHelpMessage('');
             } else if (userInfo['role'] === 'inactiveEditor') {
                 setLinesVisible(false);
+                setHelpMessage('');
             } else if (userInfo['role'] === 'spectator') {
                 setLinesVisible(true);
+                setHelpMessage('Your friends are writing 👇');
             }
         };
 
@@ -53,35 +57,28 @@ function Lines({ socket }) {
         };
     }, [socket]);
 
-    return (
-        // The component then displays all lines sorted by the timestamp at which they were created.
-        // we can switch this so that it renders previous lines according to a view
-        <div className="poem-body">
-            { linesVisible ? (
-                [...Object.values(lines)]
+    if (linesVisible) {
+        return (
+            // The component then displays all lines sorted by the timestamp at which they were created.
+            // we can switch this so that it renders previous lines according to a view
+            <div className='lines-outer-container'>
+            <div className={'fake-help-message'}>
+                {helpMessage}
+            </div>
+            <div className='lines-container'>
+                {([...Object.values(lines)]
                     .sort((a, b) => a.time - b.time)
                     .map((line) => (
-                        <div
-                            key={line.id}
-                            className="line-container"
-                            // style={{color: line.user['color']}}
-                        ><span className="line">{line.value}</span>
+                        <div key={line.id} className='line-container'>
+                            <div className='line'>
+                                {line.value}
+                            </div>
                         </div>
-                    ))
-            ) : (
-                [...Object.values(lines)]
-                    .sort((a, b) => a.time - b.time)
-                    .map((line) => (
-                        <div
-                            key={line.id}
-                            className="line-container"
-                        >
-                            <span className="line">{'\n'}</span>
-                        </div>
-                    ))
-            )}
-        </div>
-    );
+                    )))}
+            </div>
+            </div>
+        );
+    }
 }
 
 export default Lines;

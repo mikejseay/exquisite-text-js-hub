@@ -3,12 +3,19 @@
     width: 100%;
 }
 
-.line-container {
-    display: flex;
-    flex-direction: row;
-    padding: 0.25rem;
-    /*border-bottom: 1px solid #eeeeee;*/
+.lines-outer-container {
+    /*flex-grow: 1;*/
+    /*height: 100%;*/
+    /*width: 100%;*/
+    /*margin: auto;*/
 }
+
+/*.line-container {*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*    padding: 0.25rem;*/
+/*    !*border-bottom: 1px solid #eeeeee;*!*/
+/*}*/
 
 .user, .date {
     font-size: 0.625rem;
@@ -22,4 +29,8 @@
 .line {
     flex-grow: 1;
     white-space: pre-line;
+}
+
+.fake-help-message {
+    font-family: sans-serif;
 }

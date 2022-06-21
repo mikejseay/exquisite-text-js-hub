@@ -8,7 +8,7 @@
 }
 
 .app-header {
-  padding: 10px;
+  height: 60px;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -16,14 +16,18 @@
   align-items: center;
 }
 
-.poem-container {
+.app-body {
+  height: calc(100vh - 60px);
+  width: 99vw;
+  /*margin: auto;*/
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
   font-family: "Libre Baskerville", serif;
   font-size: 18px;
-  text-align: center;
+  /*text-align: center;*/
 }
 
 .app-title {
@@ -32,4 +36,16 @@
   transform: translate(-50%, 0);
   font-family: "Libre Baskerville", serif;
   font-size: 24px;
+}
+
+.app {
+  margin: 0 auto;
+  height: 100%;
+  width: 100%
+}
+
+.possible-socket {
+  margin: 0 auto;
+  height: 100%;
+  width: 100%
 }

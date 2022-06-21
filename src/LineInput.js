@@ -31,7 +31,7 @@ function useStateRef(initialValue) {
 
 const LineInput = ({ socket }) => {
     const minCharsOnLineOne = 30;
-    const minCharsOnLineTwo = 16;       // must have more than this many characters on 2nd line to make exquisite
+    const minCharsOnLineTwo = 18;       // must have more than this many characters on 2nd line to make exquisite
     const maxCharsOnLineTwo = 36;       // must have less than this many characters on 2nd line to make exquisite
     const idealCharsOnLineOne = 60;
     const idealCharsOnLineTwo = 30;
@@ -47,6 +47,7 @@ const LineInput = ({ socket }) => {
     const [donePoemEnabled, setDonePoem] = useState(true);
     const [lineInputVisible, setLineInputVisible] = useState(false);
     const [lineInputEnabled, setLineInputEnabled] = useState(false);
+    const [poemDoneAccordionVisible, setPoemDoneAccordionVisible] = useState(true);
 
     const [helpMessage, setHelpMessage] = useState('');
     // const [messageType, setMessageType] = useState(1);
@@ -75,6 +76,7 @@ const LineInput = ({ socket }) => {
                 setLineInputEnabled(true);
                 setDoneLine(false);
                 setDonePoem(true);
+                setPoemDoneAccordionVisible(true);
                 // yourTurnAudio.play();  // note this is a promise, won't play on mobile automatically
                 document.title = 'Your turn!';
                 setTimeout(() => document.title = 'Exquisite Text', 3000);
@@ -87,15 +89,19 @@ const LineInput = ({ socket }) => {
                 setLineInputEnabled(false);
                 setDoneLine(false);
                 setDonePoem(false);
+                setPoemDoneAccordionVisible(false);
                 snackBasedOnTurnsAway(userInfo['turnsAway']);
                 setSnackOpen(true);
                 setTimeout(() => setSnackOpen(false), 3000);
             } else if (userInfo['role'] === 'spectator') {
-                setHelpMessage('Your friends are writing 👇');
+                setHelpMessage('');
                 setLineInputVisible(true);
                 setLineInputEnabled(false);
                 setDoneLine(false);
                 setDonePoem(false);
+                setPoemDoneAccordionVisible(false);
+                setInputErrorMsg('');
+                setHelpMessage(lineSepString);
             }
         };
 
@@ -281,79 +287,89 @@ const LineInput = ({ socket }) => {
         // the initial idea here was to have a single textarea element that was editable
         // an alternative idea is to have this element be composed of a non-editable portion
         // and an editable portion
-        <div>
+        <div className={'line-input-container'}>
             <Snackbar
-                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
                 open={snackOpen}
                 onClose={handleClose}
                 message={snackMessage}
             />
-            <div className={'help-message'}>
-                {helpMessage}
+            <div className={'main-input-container'}>
+                <div className={'help-message'}>
+                    {helpMessage}
+                </div>
+                <div className={'input-box'}>
+                    { lineInputVisible ? (
+                        <div className={'active-input'}>
+                            <div className={'error-msg'}>
+                                {inputErrorMsg}
+                            </div>
+                            <textarea
+                                className={'poem-input'}
+                                ref={textareaRef}
+                                value={poemInput}
+                                onChange={handlePoemBodyChange}
+                                onKeyPress={handleKeypress}
+                                rows={2}
+                                cols={idealCharsOnLineOne}
+                                autoFocus={true}
+                                readOnly={!lineInputEnabled}
+                                onFocus={() => textareaRef.current === undefined ? ({}) : (textareaRef.current.setSelectionRange(-1, -1))}
+                            >
+                            </textarea>
+                        </div>
+                    ) : (
+                        <div className={'inactive-input'}>
+                            <div className={'text-spacer'} autoFocus={true}>
+                                {poemInput.replaceAll(/[^\n]/g, '*')}
+                                <div id="caret"></div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <div className={'pass-button-container'}>
+                    {doneLineEnabled ? (
+                        <div className={'pass-button'}>
+                            <Button
+                                variant={'contained'}
+                                onClick={makeExquisite}
+                                disabled={!doneLineEnabled}>
+                                Pass
+                            </Button>
+                        </div>
+                    ) : (
+                        <div className={'pass-button'}></div>
+                    )
+                    }
+                </div>
+                {poemDoneAccordionVisible && (
+                <div className={'done-poem-accordion'}>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography><strong>Does the poem seem like it's done?</strong></Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                            <div className={'done-poem-accordion-text'}>
+                                Only press this button if you're absolutely certain the poem is done!
+                            </div>
+                            </Typography>
+                            <div className={'done-poem-button'}>
+                                <Button
+                                    variant={'contained'}
+                                    onClick={finishExquisite}
+                                    disabled={!donePoemEnabled}>
+                                    Complete Poem
+                                </Button>
+                            </div>
+                        </AccordionDetails>
+                    </Accordion>
+                </div>)}
             </div>
-            { lineInputVisible ? (
-                <div className={'poem-input-container'}>
-                    <div className={'error-msg'}>
-                        {inputErrorMsg}
-                    </div>
-                    <textarea
-                        className={'poem-input'}
-                        ref={textareaRef}
-                        value={poemInput}
-                        onChange={handlePoemBodyChange}
-                        onKeyPress={handleKeypress}
-                        rows={2}
-                        cols={idealCharsOnLineOne}
-                        autoFocus={true}
-                        readOnly={!lineInputEnabled}
-                        onFocus={() => textareaRef.current === undefined ? ({}) : (textareaRef.current.setSelectionRange(-1, -1))}
-                    >
-                    </textarea>
-                </div>
-            ) : (
-                <div className={'input-group'}>
-                    <br></br>
-                    <div
-                        autoFocus={true}
-                        className={'text-spacer'}
-                    >{poemInput.replaceAll(/[^\n]/g, '*')}<div id="caret"></div>
-                    </div>
-                </div>
-            )}
-            <br></br>
-            {doneLineEnabled ? (
-                <div className={'pass-button'}>
-                    <Button
-                        variant={'contained'}
-                        onClick={makeExquisite}
-                        disabled={!doneLineEnabled}>
-                        Pass
-                    </Button>
-                </div>
-            ) : (
-                <div className={'pass-button'}></div>
-            )
-            }
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography><strong>Does the poem seem like it's done?</strong></Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Typography>
-                        Only press this button if you're absolutely certain the poem is done!
-                    </Typography>
-                    <Button
-                        variant={'contained'}
-                        onClick={finishExquisite}
-                        disabled={!donePoemEnabled}>
-                        Complete Poem
-                    </Button>
-                </AccordionDetails>
-            </Accordion>
         </div>
     );
 };

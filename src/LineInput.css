@@ -38,6 +38,51 @@
 
 .help-message {
     font-family: sans-serif;
+    white-space: pre-line;
+}
+
+.done-poem-accordion {
+    /*margin-top: auto;*/
+    /*margin-bottom: auto;*/
+    /*flex-grow: 1;*/
+}
+
+.done-poem-button {
+    text-align: center;
+}
+
+.done-poem-accordion-text {
+    margin-bottom: 1em;
+}
+
+.line-input-container {
+    margin-top: 2em;
+    /*width: 100%;*/
+    /*height: 100%;*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*flex-wrap: nowrap;*/
+    /*justify-content: space-between;*/
+    /*align-items: center;*/
+    /*flex-grow: 1;*/
+}
+
+.main-input-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*.input-box {*/
+/*    min-height: 6em;*/
+/*}*/
+
+.inactive-input {
+    margin-top: 1em;
 }
 
 /*#container {*/

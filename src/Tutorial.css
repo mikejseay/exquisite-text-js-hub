@@ -1,14 +1,9 @@
-.tutorial {
+.modal-content {
     margin-right: auto;
-}
-
-.help-modal {
-    text-align: center;
     white-space: pre-line;
-    font-size: 18px;
 }
 
-.center-button {
-    margin:0 auto;
-    display:block;
+.modal-title {
+    font-size: 18px;
+    text-align: center;
 }
