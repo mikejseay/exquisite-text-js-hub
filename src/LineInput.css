@@ -29,6 +29,7 @@
     font-size: small;
     color: red;
     white-space: pre-line;
+    text-align: center;
 }
 
 .pass-button {

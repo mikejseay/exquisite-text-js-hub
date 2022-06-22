@@ -31,6 +31,7 @@ function useStateRef(initialValue) {
 
 const LineInput = ({ socket }) => {
     const minCharsOnLineOne = 30;
+    const maxCharsOnLineOne = 70;
     const minCharsOnLineTwo = 18;       // must have more than this many characters on 2nd line to make exquisite
     const maxCharsOnLineTwo = 36;       // must have less than this many characters on 2nd line to make exquisite
     const idealCharsOnLineOne = 60;
@@ -139,7 +140,7 @@ const LineInput = ({ socket }) => {
         if (messageType === 1) {
             if (progressProp < .3) {
                 setHelpMessage('Write a line of poetry.');
-            } else if (progressProp < .8) {
+            } else if (progressProp < .75) {
                 setHelpMessage("That's it, keep going!");
             } else {
                 setHelpMessage('Go to next line when ready ⏎');
@@ -166,12 +167,23 @@ const LineInput = ({ socket }) => {
 
         if (lines.length === 1) {  // only one line
 
-            setPoemInput(evt.target.value);
-            socket.emit('lineEdit', evt.target.value);
-            // setMessageType(1);
-            // setProgress(evt.target.value.length / idealCharsOnLineOne);
-            helpBasedOnProgress(1, evt.target.value.length / idealCharsOnLineOne);
-            setDoneLine(false);
+            if (lines[0].length > maxCharsOnLineOne) {
+                const useInput = lines[0].slice(0, maxCharsOnLineOne);
+                setPoemInput(useInput);
+                socket.emit('lineEdit', useInput);
+                sendNotification('Less on first line!');
+                // setMessageType(1);
+                // setProgress(useInput.length / idealCharsOnLineOne);
+                helpBasedOnProgress(1, useInput.length / idealCharsOnLineOne);
+                setDoneLine(false);
+            } else {
+                setPoemInput(evt.target.value);
+                socket.emit('lineEdit', evt.target.value);
+                // setMessageType(1);
+                // setProgress(evt.target.value.length / idealCharsOnLineOne);
+                helpBasedOnProgress(1, evt.target.value.length / idealCharsOnLineOne);
+                setDoneLine(false);
+            }
 
         } else if (lines.length === 2) {
 
@@ -207,16 +219,17 @@ const LineInput = ({ socket }) => {
 
             }
 
-        } else {  // more than 2 lines somehow (e.g. large copy-paste)
+        } else {  // more than 2 lines somehow (e.g. large copy-paste or press enter on line two)
 
             const useInput = lines[0] + lineSepString + lines[1].slice(0, maxCharsOnLineTwo)
             setPoemInput(useInput);
             socket.emit('lineEdit', useInput);
-            sendNotification('Too much input!');
-            helpBasedOnProgress(2, maxCharsOnLineTwo / idealCharsOnLineTwo);
+            const linesTwo = useInput.split(lineSepString);
+            sendNotification('Two lines only. If done click Pass.');
+            helpBasedOnProgress(2, linesTwo[1].length / idealCharsOnLineTwo);
             // setMessageType(2);
             // setProgress(maxCharsOnLineTwo / idealCharsOnLineTwo);
-            setDoneLine(true);
+            setDoneLine(linesTwo[1].length >= minCharsOnLineTwo && linesTwo[1].length <= maxCharsOnLineTwo);
 
         }
     }
