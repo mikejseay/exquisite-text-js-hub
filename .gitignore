@@ -1,9 +1,15 @@
+# secrets
+.env
+/src/server/.env
+
 .idea
 .cert
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+/src/server/node_modules
+/src/server/package-lock.json
 /node_modules
 /.pnp
 .pnp.js
@@ -26,3 +32,4 @@ yarn-debug.log*
 yarn-error.log*
 ngrok.exe
 ngrok.yml
+

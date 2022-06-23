@@ -11,10 +11,11 @@ import './App.css';
 
 function App() {
 
+    // const serverPath = `/`;
+    const serverPath = `http://${window.location.hostname}:3000`;
+
     const [socket, setSocket] = useState(null);
     useEffect(() => {
-        // const serverPath = `/`;
-        const serverPath = `http://${window.location.hostname}:3000`;
         const newSocket = io(serverPath);
         setSocket(newSocket);
         return () => newSocket.close();

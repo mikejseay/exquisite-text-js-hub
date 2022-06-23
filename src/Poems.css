@@ -31,7 +31,12 @@
     white-space: pre-line;
 }
 
-.poem-title {
-    margin-top: 1em;
-    margin-bottom: 1em;
+.MuiAccordionSummary-content {
+    justify-content: center;
 }
+
+/*.poem-title {*/
+/*    margin-top: 1em;*/
+/*    margin-bottom: 1em;*/
+/*    text-align: center;*/
+/*}*/

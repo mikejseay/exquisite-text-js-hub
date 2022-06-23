@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import './Poems.css';
 
 function Poems({ socket }) {
@@ -36,18 +40,43 @@ function Poems({ socket }) {
         // we can switch this so that it renders previous poems according to a view
         <div className='poems-body'>
             {[...Object.values(poems)]
-                    .sort((a, b) => b.time - a.time)
-                    .map((poem) => (
-                        <div
-                            key={poem.id}
-                            className='poem-container'
-                        >
-                            <div className='poem-title'>{poem.title}</div>
-                            <div className='poem'>{poem.poemString}</div>
-                        </div>
-                    ))}
+                .sort((a, b) => a.time - b.time)
+                .map((poem) => (
+                    <div key={poem.id} className='poem-container'>
+                        <Accordion>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                            >
+                                <div className={'poem-title'}>
+                                    <strong>{poem.title}</strong>
+                                </div>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <div className={'poem'}>
+                                    {poem.content}
+                                </div>
+                            </AccordionDetails>
+                        </Accordion>
+                    </div>
+                ))}
         </div>
     );
 }
 
 export default Poems;
+
+// <div className='poems-body'>
+//     {[...Object.values(poems)]
+//         .sort((a, b) => b.time - a.time)
+//         .map((poem) => (
+//             <div
+//                 key={poem.id}
+//                 className='poem-container'
+//             >
+//                 <div className='poem-title'>{poem.title}</div>
+//                 <div className='poem'>{poem.content}</div>
+//             </div>
+//         ))}
+// </div>

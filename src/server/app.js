@@ -31,6 +31,9 @@ if (herokuDeploy) {
 
 app.use('/', indexRouter);                      // sets the router for the root page /
 app.use('/users', usersRouter);                 // sets the router for the /users page
-// app.set('view engine', 'html');              // might be needed sometime?
+
+// const db = require('./queries');
+// app.get('/poems', db.getPoems);
+// app.post('/poems', db.createPoem);
 
 module.exports = app;

@@ -7,7 +7,6 @@ const defaultUser = {
     name: 'Anonymous',
 };
 
-let loginCount = 0;
 const randomUserNames = ['Johnald', 'Jimothy', 'Gouglas', 'Bobson', 'Danthony', 'Davery',
     'Johnald', 'Jimothy', 'Gouglas', 'Bobson', 'Danthony', 'Davery'];
 const randomColors = ['red', 'blue', 'orange', 'green', 'purple'];
@@ -20,6 +19,33 @@ const uuidv4 = require('uuid').v4; // a function that generates a random uuid fo
 let lineEditCurrentVal = '';
 let lines = new Set();
 const poems = new Set();
+
+const db = require('./queries');
+
+// async function initialReturnPoems() {
+//     const dbPoems = await db.returnPoems();
+//     console.log(dbPoems);
+// }
+// initialReturnPoems();
+
+async function populatePoems() {
+    const dbPoems = await db.returnPoems();
+    for (const poemObj of dbPoems) {
+        poems.add({
+            id: poemObj.id,
+            content: poemObj.content,
+            time: poemObj.time,
+            title: poemObj.title,
+        });
+    }
+}
+populatePoems();
+
+// async function addPoemToDB(poemObj) {
+//     console.log('in addPoemToDB');
+//     console.log(poemObj);
+//     await db.storePoem(poemObj);
+// }
 
 // The users map is intended to hold user information indexed by the socket connection.
 // the key is the socket, and the value is an object full of info
@@ -60,7 +86,14 @@ class Connection {
         socket.on('poemDone', () => this.poemDone());
         socket.on('clearLines', () => this.clearLines());
         socket.on('getPoems', () => this.getPoems());
-        // socket.on('poem', (value) => this.handlePoem(value));
+
+        // socket.on('chat message', (msg) => {
+        //     db.createSocketPoem(JSON.parse(msg))
+        //         .then((_) => {
+        //             this.emitMostRecentPoems();
+        //         })
+        //         .catch((err) => io.emit(err));
+        // });
 
         // The disconnect and connection_error are predefined events
         // that are triggered when the socket disconnects, or when an error happens during the connection.
@@ -69,6 +102,13 @@ class Connection {
             console.log(`connect_error due to ${err.line}`);
         });
     }
+
+    // emitMostRecentPoems() {
+    //     db.getSocketPoems()
+    //         // .then((result) => console.log(result))
+    //         .then((result) => this.io.emit('chat message', result))
+    //         .catch(console.log);
+    // };
 
     changeTurnsForAll() {
         turnIndex = (turnIndex + 1) % nEditors; // cycles through 0 up to nEditors - 1
@@ -216,12 +256,15 @@ class Connection {
 
         const poem = {
             id: uuidv4(),
-            user: users.get(this.socket) || defaultUser,
-            poemString,
+            content: poemString,
             time: Date.now(),
             title: `exquisite text #${Math.round(Math.random() * 100)}`,
         };
         poems.add(poem);
+
+        // here we should also add the poem to our database?
+        const myPromise = db.storePoem(poem);
+        console.log(myPromise);
 
         // It will then call sendMessage() which uses the Socket.IO server
         // to send the poem to all sockets that are currently connected.

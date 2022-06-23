@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('dotenv').config();
+
 // import the http library
 var http = require('http');
 
@@ -16,8 +18,8 @@ var socketio = require('socket.io');
 // app assembles the two routers and creates the express app and does its basic configuration
 var app = require('./app');
 
-// "chat" contains the logic for the chat application
-var chat = require('./poem');
+// "poem" contains the logic for the poem application
+var poem = require('./poem');
 
 
 /**
@@ -53,11 +55,11 @@ var io = socketio(server,{
     }
 });
 
-// runs the chat functionality defined in poem.js, which takes the io server as input,
+// runs the poem functionality defined in poem.js, which takes the io server as input,
 // tells it to use the authenticator, and also tells it how to handle connection events (when someone opens the page)
 // when someone opens the page and a connection object is created, that uses their socket to create a connection to the io server
 // and tells that connection to get all existing messages, how to handle incoming messages, and how to send out a message
-chat(io);
+poem(io);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -65,7 +67,6 @@ chat(io);
 
 // the server listens on the port for any incoming connections and maintains the connection over which
 //
-// server.listen(port, '192.168.1.216');
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);

@@ -4,8 +4,8 @@ import Button from '@mui/material/Button';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Typography from '@mui/material/Typography';
 
 // import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
 import './LineInput.css';
@@ -366,11 +366,11 @@ const LineInput = ({ socket }) => {
                             <Typography><strong>Does the poem seem like it's done?</strong></Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Typography>
+                            {/*<Typography>*/}
                             <div className={'done-poem-accordion-text'}>
                                 Only press this button if you're absolutely certain the poem is done!
                             </div>
-                            </Typography>
+                            {/*</Typography>*/}
                             <div className={'done-poem-button'}>
                                 <Button
                                     variant={'contained'}
