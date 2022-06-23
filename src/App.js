@@ -6,16 +6,14 @@ import LineInput from './LineInput';
 import GameState from './GameState';
 import Tutorial from './Tutorial';
 import Settings from './Settings';
-
 import './App.css';
 
 function App() {
 
-    // const serverPath = `/`;
-    const serverPath = `http://${window.location.hostname}:3000`;
-
     const [socket, setSocket] = useState(null);
     useEffect(() => {
+        const isProduction = false;
+        const serverPath = isProduction ? `/` : `http://${window.location.hostname}:3000`;
         const newSocket = io(serverPath);
         setSocket(newSocket);
         return () => newSocket.close();
