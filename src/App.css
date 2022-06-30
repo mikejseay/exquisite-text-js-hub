@@ -1,6 +1,6 @@
 /* latin */
 @font-face {
-  font-family: 'Libre Baskerville';
+  font-family: 'Esteban', serif;
   font-style: normal;
   font-weight: 400;
   src: url(https://fonts.gstatic.com/s/librebaskerville/v13/kmKnZrc3Hgbbcjq75U4uslyuy4kn0qNZaxM.woff2) format('woff2');
@@ -25,7 +25,7 @@
   align-items: center;
   justify-content: flex-start;
   flex-wrap: nowrap;
-  font-family: "Libre Baskerville", serif;
+  font-family: 'Esteban', serif;
   font-size: 18px;
   /*text-align: center;*/
 }
@@ -34,7 +34,7 @@
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
-  font-family: "Libre Baskerville", serif;
+  font-family: 'Esteban', serif;
   font-size: 24px;
 }
 
