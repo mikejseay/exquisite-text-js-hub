@@ -215,6 +215,7 @@ const LineInput = ({ socket }) => {
                 // setMessageType(2);
                 // setProgress(lines[1].length / idealCharsOnLineTwo);
                 helpBasedOnProgress(2, lines[1].length / idealCharsOnLineTwo);
+                // console.log('just right zone', lines);
                 setDoneLine(lines[1].length >= minCharsOnLineTwo && lines[1].length <= maxCharsOnLineTwo);
 
             }
@@ -235,6 +236,8 @@ const LineInput = ({ socket }) => {
     }
 
     function makeExquisite() {
+
+        // console.log('try to make exquisite');
 
         // this function takes approximately 1.5 lines of poem, and "makes them exquisite" by clipping the 1st line.
         // the next person who sees the result should not be aware of the 1st line but must continue with a new line
