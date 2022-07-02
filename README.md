@@ -6,7 +6,7 @@
 
 <div align="center">
   <h3>
-    <a href="https://quiet-garden-15924.herokuapp.com/">
+    <a href="https://exquisite-text-js-hub-1.herokuapp.com/">
       My Heroku Deploy
     </a>
   </h3>
