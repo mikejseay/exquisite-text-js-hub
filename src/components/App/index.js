@@ -12,7 +12,7 @@ function App() {
 
     const [socket, setSocket] = useState(null);
     useEffect(() => {
-        const isProduction = false;
+        const isProduction = true;
         const serverPath = isProduction ? `/` : `http://${window.location.hostname}:3000`;
         const newSocket = io(serverPath);
         setSocket(newSocket);
