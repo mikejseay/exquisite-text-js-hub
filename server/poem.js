@@ -52,7 +52,7 @@ populatePoems();
 // note that a map is ordered -- can you pop?
 const users = new Map();
 
-const maxEditors = 4;
+const maxEditors = 2;
 let nEditors = 0;
 let turnIndex = 0;
 

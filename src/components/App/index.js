@@ -1,18 +1,18 @@
 import React, { useEffect, useState} from 'react';
 import io from 'socket.io-client';
-import Lines from './Lines';
-import Poems from './Poems';
-import LineInput from './LineInput';
-import GameState from './GameState';
-import Tutorial from './Tutorial';
-import Settings from './Settings';
+import Lines from '../Lines';
+import Poems from '../Poems';
+import LineInput from '../LineInput';
+import GameState from '../GameState';
+import Tutorial from '../Tutorial';
+import Settings from '../Settings';
 import './App.css';
 
 function App() {
 
     const [socket, setSocket] = useState(null);
     useEffect(() => {
-        const isProduction = true;
+        const isProduction = false;
         const serverPath = isProduction ? `/` : `http://${window.location.hostname}:3000`;
         const newSocket = io(serverPath);
         setSocket(newSocket);
