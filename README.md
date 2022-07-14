@@ -31,8 +31,8 @@ Exquisite Corpse is a game invented by surrealist artists in the 1920's. Each pl
 To run your own Exquisite Text server and client, we recommend cloning this repo, setting a heroku remote, and pushing the repo the heroku remote. Note that in order to do this, you must first create a Heroku account and install the Heroku CLI tools.
 
 ```sh
-git clone https://github.com/mikejseay/exquisite-text-js-hub.git
-cd exquisite-text-js-hub
+git clone https://github.com/mikejseay/exquisite-text.git
+cd exquisite-text
 heroku git:remote -a my-exquisite-text
 git push heroku main
 ```
@@ -40,8 +40,8 @@ git push heroku main
 
 ## License
 
-`exquisite-text-js-hub` is licensed under the
-[GNU General Public License v3.0](https://github.com/mikejseay/exquisite-text-js-hub/blob/main/LICENSE)
+`exquisite-text` is licensed under the
+[GNU General Public License v3.0](https://github.com/mikejseay/exquisite-text/blob/main/LICENSE)
 
 Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.
 
@@ -55,4 +55,4 @@ mikejseay@gmail.com
 
 Click the ▶ in the top right corner to see a demonstration. Normally, each window would be on a different player's computer!
 
-![](https://github.com/mikejseay/exquisite-text-js-hub/blob/main/public/exquisiteDemonstrationSmaller.gif)
+![](https://github.com/mikejseay/exquisite-text/blob/main/public/exquisiteDemonstrationSmaller.gif)
