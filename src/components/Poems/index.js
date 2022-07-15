@@ -1,68 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import './Poems.css';
+import React, { useEffect, useState } from "react";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import "./Poems.css";
 
 function Poems({ socket }) {
+  // The poems state is a plain object that contains each poem indexed by the poem ID.
+  // Using React hooks, this state is updated inside the event handlers to reflect the changes provided by the server.
+  const [poems, setPoems] = useState({});
 
-    // The poems state is a plain object that contains each poem indexed by the poem ID.
-    // Using React hooks, this state is updated inside the event handlers to reflect the changes provided by the server.
-    const [poems, setPoems] = useState({});
+  // const [poemsVisible, setPoemsVisible] = useState(false);
 
-    // const [poemsVisible, setPoemsVisible] = useState(false);
+  useEffect(() => {
+    // Event handlers for the poem and the deletePoem events are set up for the Socket.IO connection.
+    const poemListener = (poem) => {
+      setPoems((prevPoems) => {
+        const newPoems = { ...prevPoems };
+        newPoems[poem.id] = poem;
+        return newPoems;
+      });
+    };
 
-    useEffect(() => {
+    socket.on("poem", poemListener);
 
-        // Event handlers for the poem and the deletePoem events are set up for the Socket.IO connection.
-        const poemListener = (poem) => {
-            setPoems((prevPoems) => {
-                const newPoems = {...prevPoems};
-                newPoems[poem.id] = poem;
-                return newPoems;
-            });
-        };
+    // tells the server for this client to do getPoems
+    // since this is client-side, it only happens for this client
+    socket.emit("getPoems");
 
-        socket.on('poem', poemListener);
+    return () => {
+      socket.off("poem", poemListener);
+    };
+  }, [socket]);
 
-        // tells the server for this client to do getPoems
-        // since this is client-side, it only happens for this client
-        socket.emit('getPoems');
-
-        return () => {
-            socket.off('poem', poemListener);
-        };
-    }, [socket]);
-
-    return (
-        // The component then displays all poems sorted by the timestamp at which they were created.
-        // we can switch this so that it renders previous poems according to a view
-        <div className='poems-body'>
-            {[...Object.values(poems)]
-                .sort((a, b) => a.time - b.time)
-                .map((poem) => (
-                    <div key={poem.id} className='poem-container'>
-                        <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1a-content"
-                                id="panel1a-header"
-                            >
-                                <div className={'poem-title'}>
-                                    <strong>{poem.title}</strong>
-                                </div>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <div className={'poem'}>
-                                    {poem.content}
-                                </div>
-                            </AccordionDetails>
-                        </Accordion>
-                    </div>
-                ))}
-        </div>
-    );
+  return (
+    // The component then displays all poems sorted by the timestamp at which they were created.
+    // we can switch this so that it renders previous poems according to a view
+    <div className="poems-body">
+      {[...Object.values(poems)]
+        .sort((a, b) => a.time - b.time)
+        .map((poem) => (
+          <div key={poem.id} className="poem-container">
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <div className={"poem-title"}>
+                  <strong>{poem.title}</strong>
+                </div>
+              </AccordionSummary>
+              <AccordionDetails>
+                <div className={"poem"}>{poem.content}</div>
+              </AccordionDetails>
+            </Accordion>
+          </div>
+        ))}
+    </div>
+  );
 }
 
 export default Poems;
