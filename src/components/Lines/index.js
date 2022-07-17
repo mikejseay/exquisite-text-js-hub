@@ -55,24 +55,26 @@ function Lines({ socket }) {
     };
   }, [socket]);
 
-  if (linesVisible) {
-    return (
-      // The component then displays all lines sorted by the timestamp at which they were created.
-      // we can switch this so that it renders previous lines according to a view
-      <div className="lines-outer-container">
-        <div className={"fake-help-message"}>{helpMessage}</div>
-        <div className="lines-container">
-          {[...Object.values(lines)]
-            .sort((a, b) => a.time - b.time)
-            .map((line) => (
-              <div key={line.id} className="line-container">
-                <div className="line">{line.value}</div>
-              </div>
-            ))}
-        </div>
-      </div>
-    );
+  if (!linesVisible) {
+    return <React.Fragment />
   }
+
+  return (
+    // The component then displays all lines sorted by the timestamp at which they were created.
+    // we can switch this so that it renders previous lines according to a view
+    <div className="lines-outer-container">
+      <div className={"fake-help-message"}>{helpMessage}</div>
+      <div className="lines-container">
+        {[...Object.values(lines)]
+          .sort((a, b) => a.time - b.time)
+          .map((line) => (
+            <div key={line.id} className="line-container">
+              <div className="line">{line.value}</div>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
 }
 
 export default Lines;

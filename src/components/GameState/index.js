@@ -37,7 +37,7 @@ function GameState({ socket }) {
     socket.on("allUserInfo", allUserInfoListener);
 
     // send only this user their info to initially set them up
-    // note that there is a userInfoListener in GameState, Lines, and LineInput
+    // note that there is a userInfoListener in GameState and LineInput
     // is that bad?
     socket.emit("sendUserInfo");
 
