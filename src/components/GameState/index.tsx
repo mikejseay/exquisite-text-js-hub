@@ -3,10 +3,12 @@ import Popover from "@mui/material/Popover";
 import PeopleIcon from "@mui/icons-material/People";
 import IconButton from "@mui/material/IconButton";
 import "./GameState.css";
+import { Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
-function GameState({ socket }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const handleClick = (event) => {
+function GameState({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> }) {
+  const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
+  const handleClick = (event: { currentTarget: React.SetStateAction<Element | null> }) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -14,22 +16,32 @@ function GameState({ socket }) {
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
+  type User = {
+    id: number;
+    name: string;
+    role: string;
+    turn: number;
+    turnsAway: number;
+  };
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [turn, setTurn] = useState(0);
-  const [usersArr, setUsersArr] = useState([]);
+  const [usersArr, setUsersArr] = useState<Array<User>>([]);
 
   useEffect(() => {
     // Event handlers for the line and the deleteLine events are set up for the Socket.IO connection.
-    const userInfoListener = (userInfo) => {
+    const userInfoListener = (userInfo: {
+      ["name"]: React.SetStateAction<string>;
+      ["role"]: React.SetStateAction<string>;
+      ["turn"]: React.SetStateAction<number>;
+    }) => {
       setName(userInfo["name"]);
       setRole(userInfo["role"]);
       setTurn(userInfo["turn"]);
     };
 
     // Event handlers for the line and the deleteLine events are set up for the Socket.IO connection.
-    const allUserInfoListener = (allUserInfo) => {
+    const allUserInfoListener = (allUserInfo: React.SetStateAction<Array<User>>) => {
       setUsersArr(allUserInfo);
     };
 
@@ -52,9 +64,13 @@ function GameState({ socket }) {
 
   return (
     <div className={"game-state"}>
-      <IconButton aria-label="players" onClick={handleClick} size={"large"}>
-        <PeopleIcon />
-      </IconButton>
+        <IconButton
+          aria-label="players"
+          onClick={handleClick}
+          size={"large"}
+        >
+          <PeopleIcon />
+        </IconButton>
       <Popover
         id={id}
         open={open}
