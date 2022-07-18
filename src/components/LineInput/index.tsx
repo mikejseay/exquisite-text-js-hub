@@ -1,9 +1,7 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-} from "react";
-import isNil from 'lodash/isNil';
+import React, { useState, useRef, useEffect } from "react";
+import isNil from "lodash/isNil";
+import { Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import Snackbar from "@mui/material/Snackbar";
 import Button from "@mui/material/Button";
 import Accordion from "@mui/material/Accordion";
@@ -12,10 +10,10 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 
-// import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
 import "./LineInput.css";
-import { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
+// import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
+
+import type { UserInfo } from "../../types";
 
 // if activeEditor, the letters are visible and textarea is editable
 // if inactiveEditor, the letters are invisible, and textarea is not editable
@@ -35,7 +33,11 @@ function useStateRef(initialValue: boolean) {
   return [value, setValue, ref] as const;
 }
 
-const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> }) => {
+const LineInput = ({
+  socket,
+}: {
+  socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+}) => {
   const minCharsOnLineOne = 30;
   const maxCharsOnLineOne = 70;
   const minCharsOnLineTwo = 18; // must have more than this many characters on 2nd line to make exquisite
@@ -64,7 +66,8 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
   const [inputErrorMsg, setInputErrorMsg] = useState(lineSepString);
 
   // const textareaRef = useRef() as React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>;
-  const textareaRef = useRef() as React.MutableRefObject<HTMLTextAreaElement | null>;
+  const textareaRef =
+    useRef() as React.MutableRefObject<HTMLTextAreaElement | null>;
 
   // const yourTurnAudio = new Audio(yourTurnSound);
 
@@ -79,7 +82,7 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
       setPoemInput(lineEdit);
     };
 
-    const userInfoListener = (userInfo: { [x: string]: string; }) => {
+    const userInfoListener = (userInfo: UserInfo) => {
       if (userInfo["role"] === "activeEditor") {
         setHelpMessage("Complete a line of poetry.");
         setLineInputVisible(true);
@@ -90,7 +93,7 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
         // yourTurnAudio.play();  // note this is a promise, won't play on mobile automatically
         document.title = "Your turn!";
         setTimeout(() => (document.title = "Exquisite Text"), 3000);
-        snackBasedOnTurnsAway(Number(userInfo["turnsAway"]));
+        snackBasedOnTurnsAway(userInfo["turnsAway"]);
         setSnackOpen(true);
         setTimeout(() => setSnackOpen(false), 3000);
       } else if (userInfo["role"] === "inactiveEditor") {
@@ -100,7 +103,7 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
         setDoneLine(false);
         setDonePoem(false);
         setPoemDoneAccordionVisible(false);
-        snackBasedOnTurnsAway(Number(userInfo["turnsAway"]));
+        snackBasedOnTurnsAway(userInfo["turnsAway"]);
         setSnackOpen(true);
         setTimeout(() => setSnackOpen(false), 3000);
       } else if (userInfo["role"] === "spectator") {
@@ -132,7 +135,7 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
     };
   }, [socket]);
 
-  function snackBasedOnTurnsAway(turnsAway: number) {
+  function snackBasedOnTurnsAway(turnsAway: UserInfo["turnsAway"]) {
     if (turnsAway === 0) {
       setSnackMessage("It's your turn!");
     } else if (turnsAway === 1) {
@@ -168,7 +171,10 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
   }
 
   // handles any change to the textarea element. written to be as fast as possible, so a bit verbose
-  function handlePoemBodyChange(evt: { preventDefault: () => void; target: { value: React.SetStateAction<string>; }; }) {
+  function handlePoemBodyChange(evt: {
+    preventDefault: () => void;
+    target: { value: React.SetStateAction<string> };
+  }) {
     evt.preventDefault();
 
     const lines = String(evt.target.value).split(lineSepString);
@@ -300,7 +306,7 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
     socket.emit("sendAllUserInfoToAll");
   }
 
-  function handleKeypress(e: { charCode: number; ctrlKey: any; }) {
+  function handleKeypress(e: { charCode: number; ctrlKey: any }) {
     // it triggers by pressing ctrl + enter (13), when the "Done Line" button is enabled
     // might not be necessary, but it's kind of nice
     // note we use doneLineRef instead of doneLineEnabled because it gets the current value
@@ -338,7 +344,7 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
                 autoFocus={true}
                 readOnly={!lineInputEnabled}
                 onFocus={() =>
-                  (!isNil(textareaRef) && !isNil(textareaRef.current))
+                  !isNil(textareaRef) && !isNil(textareaRef.current)
                     ? textareaRef.current.setSelectionRange(-1, -1)
                     : {}
                 }
