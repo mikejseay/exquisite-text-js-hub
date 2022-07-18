@@ -12,7 +12,7 @@ import { DefaultEventsMap } from "socket.io/dist/typed-events";
 function App() {
   const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   useEffect(() => {
-    const isProduction = false;
+    const isProduction = true;
     const serverPath = isProduction
       ? `/`
       : `http://${window.location.hostname}:3000`;
