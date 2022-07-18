@@ -5,6 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import "./GameState.css";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { IUserInfo } from "../../types";
 
 function GameState({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> }) {
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
@@ -16,17 +17,11 @@ function GameState({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  type User = {
-    id: number;
-    name: string;
-    role: string;
-    turn: number;
-    turnsAway: number;
-  };
+
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [turn, setTurn] = useState(0);
-  const [usersArr, setUsersArr] = useState<Array<User>>([]);
+  const [usersArr, setUsersArr] = useState<Array<IUserInfo>>([]);
 
   useEffect(() => {
     // Event handlers for the line and the deleteLine events are set up for the Socket.IO connection.
@@ -41,7 +36,7 @@ function GameState({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
     };
 
     // Event handlers for the line and the deleteLine events are set up for the Socket.IO connection.
-    const allUserInfoListener = (allUserInfo: React.SetStateAction<Array<User>>) => {
+    const allUserInfoListener = (allUserInfo: React.SetStateAction<Array<IUserInfo>>) => {
       setUsersArr(allUserInfo);
     };
 

@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import "./LineInput.css";
 // import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
 
-import type { UserInfo } from "../../types";
+import type { IUserInfo } from "../../types";
 
 // if activeEditor, the letters are visible and textarea is editable
 // if inactiveEditor, the letters are invisible, and textarea is not editable
@@ -82,7 +82,7 @@ const LineInput = ({
       setPoemInput(lineEdit);
     };
 
-    const userInfoListener = (userInfo: UserInfo) => {
+    const userInfoListener = (userInfo: IUserInfo) => {
       if (userInfo["role"] === "activeEditor") {
         setHelpMessage("Complete a line of poetry.");
         setLineInputVisible(true);
@@ -135,7 +135,7 @@ const LineInput = ({
     };
   }, [socket]);
 
-  function snackBasedOnTurnsAway(turnsAway: UserInfo["turnsAway"]) {
+  function snackBasedOnTurnsAway(turnsAway: IUserInfo["turnsAway"]) {
     if (turnsAway === 0) {
       setSnackMessage("It's your turn!");
     } else if (turnsAway === 1) {
@@ -352,7 +352,7 @@ const LineInput = ({
             </div>
           ) : (
             <div className={"inactive-input"}>
-              <div className={"text-spacer"} data-autoFocus={true}>
+              <div className={"text-spacer"} data-autofocus={true}>
                 {poemInput.replaceAll(/[^\n]/g, "*")}
                 <div id="caret"></div>
               </div>

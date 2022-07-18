@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import {
+  ILine,
+  ILines,
+  IUserInfo,
+} from "../../types";
 import "./Lines.css";
 
 // if activeEditor or inactiveEditor, NOTHING is visible here until the end
 // if spectator, EVERYTHING is visible here
 
-function Lines({ socket }) {
+function Lines({
+  socket,
+}: {
+  socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+}) {
   // The lines state is a plain object that contains each line indexed by the line ID.
   // Using React hooks, this state is updated inside the event handlers to reflect the changes provided by the server.
-  const [lines, setLines] = useState({});
+  const [lines, setLines] = useState<ILines>({});
 
   const [linesVisible, setLinesVisible] = useState(false);
   const [helpMessage, setHelpMessage] = useState("");
 
   useEffect(() => {
     // Event handlers for the line and the deleteLine events are set up for the Socket.IO connection.
-    const lineListener = (line) => {
+    const lineListener = (line: ILine) => {
       setLines((prevLines) => {
         const newLines = { ...prevLines };
         newLines[line.id] = line;
@@ -27,7 +38,7 @@ function Lines({ socket }) {
       console.log("clearLines was reached once");
     };
 
-    const userInfoListener = (userInfo) => {
+    const userInfoListener = (userInfo: IUserInfo) => {
       if (userInfo["role"] === "activeEditor") {
         setLinesVisible(false);
         setHelpMessage("");
@@ -56,7 +67,7 @@ function Lines({ socket }) {
   }, [socket]);
 
   if (!linesVisible) {
-    return <React.Fragment />
+    return <React.Fragment />;
   }
 
   return (
