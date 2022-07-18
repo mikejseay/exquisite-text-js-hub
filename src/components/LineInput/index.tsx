@@ -1,4 +1,9 @@
-import React, { useState, useRef, useEffect, LegacyRef } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+} from "react";
+import isNil from 'lodash/isNil';
 import Snackbar from "@mui/material/Snackbar";
 import Button from "@mui/material/Button";
 import Accordion from "@mui/material/Accordion";
@@ -58,8 +63,8 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
 
   const [inputErrorMsg, setInputErrorMsg] = useState(lineSepString);
 
-   // TODO: LegacyRef<HTMLTextAreaElement> | undefined
-  const textareaRef = useRef();
+  // const textareaRef = useRef() as React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>;
+  const textareaRef = useRef() as React.MutableRefObject<HTMLTextAreaElement | null>;
 
   // const yourTurnAudio = new Audio(yourTurnSound);
 
@@ -333,15 +338,15 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
                 autoFocus={true}
                 readOnly={!lineInputEnabled}
                 onFocus={() =>
-                  textareaRef.current === undefined
-                    ? {}
-                    : textareaRef.current.setSelectionRange(-1, -1)
+                  (!isNil(textareaRef) && !isNil(textareaRef.current))
+                    ? textareaRef.current.setSelectionRange(-1, -1)
+                    : {}
                 }
               ></textarea>
             </div>
           ) : (
             <div className={"inactive-input"}>
-              <div className={"text-spacer"} autoFocus={true}>
+              <div className={"text-spacer"} data-autoFocus={true}>
                 {poemInput.replaceAll(/[^\n]/g, "*")}
                 <div id="caret"></div>
               </div>
@@ -349,8 +354,8 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
           )}
         </div>
         <div className={"pass-button-container"}>
-          {doneLineEnabled ? (
-            <div className={"pass-button"}>
+          <div className={"pass-button"}>
+            {doneLineEnabled && (
               <Button
                 variant={"contained"}
                 onClick={makeExquisite}
@@ -358,10 +363,8 @@ const LineInput = ({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
               >
                 Pass
               </Button>
-            </div>
-          ) : (
-            <div className={"pass-button"}></div>
-          )}
+            )}
+          </div>
         </div>
         {poemDoneAccordionVisible && (
           <div className={"done-poem-accordion"}>

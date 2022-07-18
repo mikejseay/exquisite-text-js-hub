@@ -18,6 +18,7 @@
     "cors": "^2.8.5",
     "debug": "^4.3.4",
     "express": "^4.18.1",
+    "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "pg": "^8.7.3",
     "prettier": "^2.7.1",
@@ -57,5 +58,8 @@
   },
   "engines": {
     "node": "16.16.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.182"
   }
 }
