@@ -4,7 +4,7 @@ export enum Role {
     spectator = "spectator",
   }
 
-export type UserInfo = {
+export interface IUserInfo {
   id: string;
   name: string;
   color: string;
@@ -12,3 +12,14 @@ export type UserInfo = {
   role: Role;
   turnsAway: number;
 };
+
+export interface ILines {
+  [id: string]: ILine;
+}
+
+export interface ILine {
+  id: string;
+  user: IUserInfo;
+  value: string;
+  time: number;
+}
