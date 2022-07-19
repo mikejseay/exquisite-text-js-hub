@@ -1,8 +1,9 @@
 import SettingsIcon from "@mui/icons-material/Settings";
 import IconButton from "@mui/material/IconButton";
+
 import "./Settings.css";
 
-const Tutorial = ({ socket }) => {
+const Settings = () => {
   return (
     <div className={"settings"}>
       <IconButton aria-label="players" size={"large"}>
@@ -12,4 +13,4 @@ const Tutorial = ({ socket }) => {
   );
 };
 
-export default Tutorial;
+export default Settings;

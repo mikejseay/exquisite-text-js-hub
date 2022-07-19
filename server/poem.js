@@ -30,12 +30,12 @@ const db = require('./queries');
 
 async function populatePoems() {
     const dbPoems = await db.returnPoems();
-    for (const poemObj of dbPoems) {
+    for (const { id, content, time, title } of dbPoems) {
         poems.add({
-            id: poemObj.id,
-            content: poemObj.content,
-            time: poemObj.time,
-            title: poemObj.title,
+            id,
+            content,
+            time,
+            title,
         });
     }
 }
