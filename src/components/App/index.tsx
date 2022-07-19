@@ -35,7 +35,7 @@ function App() {
           <Tutorial />
           <div className={"app-title"}>Exquisite Text</div>
           <GameState socket={socket} />
-          <Settings socket={socket} />
+          <Settings />
         </header>
         <div className={"app-body"}>
           <Lines socket={socket} />

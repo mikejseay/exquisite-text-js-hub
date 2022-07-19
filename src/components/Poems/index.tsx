@@ -1,20 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+
+import {
+  IPoem,
+  IPoems,
+} from "../../types";
 import "./Poems.css";
 
-function Poems({ socket }) {
+function Poems({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> }) {
   // The poems state is a plain object that contains each poem indexed by the poem ID.
   // Using React hooks, this state is updated inside the event handlers to reflect the changes provided by the server.
-  const [poems, setPoems] = useState({});
+  const [poems, setPoems] = React.useState<IPoems>({} as IPoems);
 
-  // const [poemsVisible, setPoemsVisible] = useState(false);
+  // const [poemsVisible, setPoemsVisible] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Event handlers for the poem and the deletePoem events are set up for the Socket.IO connection.
-    const poemListener = (poem) => {
+    const poemListener = (poem: IPoem) => {
       setPoems((prevPoems) => {
         const newPoems = { ...prevPoems };
         newPoems[poem.id] = poem;
