@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+import { Server } from "socket.io";
+import type { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "../src/types";
+
 require('dotenv').config();
 
 // import the http library
@@ -46,14 +49,17 @@ app.set('port', port);
 var server = http.createServer(app);
 // var server = https.createServer(credentials, app);
 
-// the socket.io server which will handle socket-based messages
-// in production, you might want to only allow certain clients
-var io = socketio(server,{
+
+
+const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(server,{
     cors: {
         origin: '*',
         methods: ['GET', 'POST']
     }
 });
+
+// the socket.io server which will handle socket-based messages
+// in production, you might want to only allow certain clients
 
 // runs the poem functionality defined in poem.js, which takes the io server as input,
 // tells it to use the authenticator, and also tells it how to handle connection events (when someone opens the page)
@@ -132,3 +138,5 @@ function onListening() {
         : 'port ' + addr.port;
     debug('Listening on ' + bind);
 }
+
+export {};

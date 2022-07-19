@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import io, { Socket } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import Lines from "../Lines";
 import Poems from "../Poems";
 import LineInput from "../LineInput";
@@ -8,6 +8,9 @@ import Tutorial from "../Tutorial";
 import Settings from "../Settings";
 import "./App.css";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import type { ClientToServerEvents, ServerToClientEvents } from "../../types";
+
+// const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
 
 function App() {
   const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
@@ -16,7 +19,7 @@ function App() {
     const serverPath = isProduction
       ? `/`
       : `http://${window.location.hostname}:3000`;
-    const newSocket = io(serverPath);
+    const newSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io(serverPath);
     setSocket(newSocket);
     return () => { newSocket.close() };
   }, [setSocket]);
@@ -27,6 +30,7 @@ function App() {
   if (!socket) {
     return <div>Not Connected</div>;
   }
+  console.log(socket);
 
   return (
     <div className={"possible-socket"}>
