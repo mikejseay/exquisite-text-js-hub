@@ -39,19 +39,19 @@ export interface IPoem {
 
 export interface ServerToClientEvents {
   clearLines: () => void;
-  userInfo: (a:  IUserInfo) => void;
-  allUserInfo: (a:  Array<IUserInfo>) => void;
-  line: (a:  ILine) => void;
-  lineEdit: (a:  string) => void;
-  poem: (a:  IPoem) => void;
+  userInfo: (a: IUserInfo) => void;
+  allUserInfo: (a: Array<IUserInfo>) => void;
+  line: (a: ILine) => void;
+  lineEdit: (a: string) => void;
+  poem: (a: IPoem) => void;
 }
 
 export interface ClientToServerEvents {
   sendUserInfo: () => void;
   sendAllUserInfoToAll: () => void;
   getLineEdit: () => void;
-  lineEdit: (a:  string) => void;
-  line: (a:  string) => void;
+  lineEdit: (a: string) => void;
+  line: (a: string) => void;
   allTurns: () => void;
   sendEachUserTheirInfo: () => void;
   poemDone: () => void;

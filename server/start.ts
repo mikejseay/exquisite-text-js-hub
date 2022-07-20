@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 
 import { Server } from "socket.io";
-import type { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "../src/types";
+import type {
+    ClientToServerEvents,
+    InterServerEvents,
+    ServerToClientEvents,
+    SocketData,
+} from "../src/types";
 
 require('dotenv').config();
 
@@ -13,10 +18,6 @@ var http = require('http');
 // var privateKey   = fs.readFileSync('./.cert/key.pem', 'utf8');
 // var certificate  = fs.readFileSync('./.cert/cert.pem', 'utf8');
 // var credentials = {key: privateKey, cert: certificate};
-
-
-// import the Socket.IO library
-var socketio = require('socket.io');
 
 // app assembles the two routers and creates the express app and does its basic configuration
 var app = require('./app');
@@ -51,7 +52,7 @@ var server = http.createServer(app);
 
 
 
-const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(server,{
+const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(server, {
     cors: {
         origin: '*',
         methods: ['GET', 'POST']
