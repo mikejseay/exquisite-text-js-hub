@@ -2,6 +2,10 @@
 // and using that content, we maintain the user list and current history of the poem.
 // as far as I can tell, this will be the equivalent of the exquisite functionality, etc.
 
+import { Server, Socket } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { ClientToServerEvents, ILine, InterServerEvents, IPoem, ServerToClientEvents, SocketData } from "../src/types";
+
 const defaultUser = {
     id: 'anon',
     name: 'Anonymous',
@@ -17,8 +21,8 @@ const uuidv4 = require('uuid').v4; // a function that generates a random uuid fo
 
 // The lines object is a set that simply contains all lines together with some metadata.
 let lineEditCurrentVal = '';
-let lines = new Set();
-const poems = new Set();
+let lines: Set<ILine> = new Set();
+const poems: Set<IPoem> = new Set();
 
 const db = require('./queries');
 
@@ -59,8 +63,13 @@ let turnIndex = 0;
 // When a user connects, a Connection object will be created for them, which will use their socket to connect
 // to the IO server. It sits there and handles events from their socket
 class Connection {
+    io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
+    socket: Socket;
     // The constructor of the Connection class sets up callbacks on events coming from the socket.
-    constructor(io, socket) {
+    constructor(
+        io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
+        socket: Socket,
+    ) {
         this.socket = socket;
         this.io = io;
 
@@ -202,7 +211,7 @@ class Connection {
         this.assignRolesOnPrinciples();
     }
 
-    sendLine(line) {
+    sendLine(line: ILine) {
         // emit is a crucial method that sends the line to all users
         // note that here we name this emitted signal "line," which allows us to identify it within IO
         this.io.sockets.emit('line', line);
@@ -219,8 +228,8 @@ class Connection {
     }
 
     // When a new line arrives from this Connection, handleMessage() creates a line object and adds it to lines
-    handleLine(value) {
-        const line = {
+    handleLine(value: ILine["value"]) {
+        const line: ILine = {
             id: uuidv4(),
             user: users.get(this.socket) || defaultUser,
             value,
@@ -234,13 +243,13 @@ class Connection {
         this.sendLine(line);
     }
 
-    handleLineEdit(value) {
+    handleLineEdit(value: string) {
         // this.io.sockets.emit('lineEdit', value);
         this.socket.broadcast.emit('lineEdit', value);
         lineEditCurrentVal = value;
     }
 
-    sendPoem(poem) {
+    sendPoem(poem: IPoem) {
         // emit is a crucial method that sends the poem to all users
         // note that here we name this emitted signal "poem," which allows us to identify it within IO
         this.io.sockets.emit('poem', poem);
@@ -252,9 +261,9 @@ class Connection {
     }
 
     // When a new poem arrives from this Connection, handleMessage() creates a poem object and adds it to poems
-    handlePoem(poemString) {
+    handlePoem(poemString: string) {
 
-        const poem = {
+        const poem: IPoem = {
             id: uuidv4(),
             content: poemString,
             time: Date.now(),
@@ -288,7 +297,7 @@ class Connection {
 }
 
 // The module exports a single function poem that takes the Socket.IO server instance as a parameter.
-function poem(io) {
+function poem(io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) {
 
     // connection is a reserved name for a socket event when someone connects
     io.on('connection', (socket) => {

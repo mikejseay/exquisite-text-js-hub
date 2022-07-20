@@ -7,13 +7,10 @@ import GameState from "../GameState";
 import Tutorial from "../Tutorial";
 import Settings from "../Settings";
 import "./App.css";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import type { ClientToServerEvents, ServerToClientEvents } from "../../types";
 
-// const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
-
 function App() {
-  const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+  const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
   useEffect(() => {
     const isProduction = true;
     const serverPath = isProduction
