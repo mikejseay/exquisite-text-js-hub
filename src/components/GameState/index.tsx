@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import Popover from "@mui/material/Popover";
 import PeopleIcon from "@mui/icons-material/People";
 import IconButton from "@mui/material/IconButton";
-import "./GameState.css";
 import { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { IUserInfo } from "../../types";
+import {
+  ClientToServerEvents,
+  IUserInfo,
+  ServerToClientEvents,
+} from "../../types";
+import { marginLeftAuto } from "./styles";
 
-function GameState({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> }) {
+function GameState({ socket }: { socket: Socket<ServerToClientEvents, ClientToServerEvents> }) {
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const handleClick = (event: { currentTarget: React.SetStateAction<Element | null> }) => {
     setAnchorEl(event.currentTarget);
@@ -58,7 +61,7 @@ function GameState({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsM
   }, [socket]);
 
   return (
-    <div className={"game-state"}>
+    <div style={marginLeftAuto}>
         <IconButton
           aria-label="players"
           onClick={handleClick}

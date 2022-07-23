@@ -1,13 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import {
+  useEffect,
+  useState,
+} from "react";
+import {
+  io,
+  Socket,
+} from "socket.io-client";
 import Lines from "../Lines";
 import Poems from "../Poems";
 import LineInput from "../LineInput";
 import GameState from "../GameState";
 import Tutorial from "../Tutorial";
 import Settings from "../Settings";
-import "./App.css";
-import type { ClientToServerEvents, ServerToClientEvents } from "../../types";
+import {
+  appHeader,
+  appBody,
+  appTitle,
+  app,
+  possibleSocket,
+} from "./styles";
+import type {
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from "../../types";
 
 function App() {
   const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
@@ -30,15 +45,15 @@ function App() {
   console.log(socket);
 
   return (
-    <div className={"possible-socket"}>
-      <div className="app">
-        <header className={"app-header"}>
+    <div style={possibleSocket}>
+      <div style={app}>
+        <header style={appHeader}>
           <Tutorial />
-          <div className={"app-title"}>Exquisite Text</div>
+          <div style={appTitle}>Exquisite Text</div>
           <GameState socket={socket} />
           <Settings />
         </header>
-        <div className={"app-body"}>
+        <div style={appBody}>
           <Lines socket={socket} />
           <LineInput socket={socket} />
           <Poems socket={socket} />

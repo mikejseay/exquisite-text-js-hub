@@ -1,8 +1,6 @@
 import SettingsIcon from "@mui/icons-material/Settings";
 import IconButton from "@mui/material/IconButton";
 
-import "./Settings.css";
-
 const Settings = () => {
   return (
     <div className={"settings"}>
