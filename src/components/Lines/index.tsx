@@ -77,7 +77,7 @@ function Lines({
       <div className={"fake-help-message"}>{helpMessage}</div>
       <div className="lines-container">
         {[...Object.values(lines)]
-          .sort((a, b) => a.time - b.time)
+          .sort((a, b) => Number(a.time) - Number(b.time))
           .map((line) => (
             <div key={line.id} className="line-container">
               <div className="line">{line.value}</div>
