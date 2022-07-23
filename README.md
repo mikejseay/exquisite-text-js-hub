@@ -28,6 +28,43 @@ Exquisite Corpse is a game invented by surrealist artists in the 1920's. Each pl
 
 ## Installation & Start
 
+### Local Development
+
+Clone this repository and make it your current directory.
+
+Install [Node](https://nodejs.org/en/) and [PostgreSQL](https://www.postgresql.org/download/) according to their instructions for your operating system. If you're using a Linux-like OS and have Homebrew, you can install PostgreSQL with `brew install postgresql` and then start its service with `brew services start postgresql`.
+
+To set up the PostgreSQL backend, first log in to the default database with `psql postgres`.
+
+Run the following commands from the `postgres` command line to create the default user we will use:
+
+```
+CREATE ROLE me WITH CREATEDB LOGIN PASSWORD 'password';
+\q
+```
+
+Reconnect to `postgres` as the newly created user with `psql -d postgres -U me`, then run the following commands:
+
+```
+CREATE DATABASE exquisite;
+\c exquisite;
+CREATE TABLE poems(
+    ID SERIAL PRIMARY KEY,
+    title text,
+    content text,
+    time timestamp
+);
+\q
+```
+
+Install Yarn with `npm install --global yarn` and then run `yarn` to install the frontend node modules.
+
+Open up a new terminal and go to the server directory with `cd ./server`, then run `yarn` again, this time to install the server's node modules.
+
+In the server terminal, run `yarn start`, then in the root terminal run `yarn start`. This should automatically open a new browser tab at [`http://localhost:8080/`](http://localhost:8080/). 
+
+### Heroku Deployment
+
 To run your own Exquisite Text server and client, we recommend cloning this repo, setting a heroku remote, and pushing the repo the heroku remote. Note that in order to do this, you must first create a Heroku account and install the Heroku CLI tools.
 
 ```sh
@@ -36,7 +73,6 @@ cd exquisite-text
 heroku git:remote -a my-exquisite-text
 git push heroku main
 ```
-
 
 ## License
 
