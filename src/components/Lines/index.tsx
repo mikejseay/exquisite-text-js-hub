@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import {
+  ClientToServerEvents,
   ILine,
   ILines,
   IUserInfo,
+  ServerToClientEvents,
 } from "../../types";
-import "./Lines.css";
+import {
+  lineStyle,
+  fakeHelpMessage,
+} from "./styles";
 
 // if activeEditor or inactiveEditor, NOTHING is visible here until the end
 // if spectator, EVERYTHING is visible here
@@ -14,7 +18,7 @@ import "./Lines.css";
 function Lines({
   socket,
 }: {
-  socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>,
 }) {
   // The lines state is a plain object that contains each line indexed by the line ID.
   // Using React hooks, this state is updated inside the event handlers to reflect the changes provided by the server.
@@ -74,13 +78,26 @@ function Lines({
     // The component then displays all lines sorted by the timestamp at which they were created.
     // we can switch this so that it renders previous lines according to a view
     <div className="lines-outer-container">
-      <div className={"fake-help-message"}>{helpMessage}</div>
+      <div
+        className={"fake-help-message"}
+        style={fakeHelpMessage}
+      >
+        {helpMessage}
+      </div>
       <div className="lines-container">
         {[...Object.values(lines)]
           .sort((a, b) => Number(a.time) - Number(b.time))
           .map((line) => (
-            <div key={line.id} className="line-container">
-              <div className="line">{line.value}</div>
+            <div
+              className="line-container"
+              key={line.id}
+            >
+              <div
+                className="line"
+                style={lineStyle}
+              >
+                {line.value}
+              </div>
             </div>
           ))}
       </div>

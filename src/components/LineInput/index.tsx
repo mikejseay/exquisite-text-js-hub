@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, KeyboardEvent } from "react";
 import isNil from "lodash/isNil";
 import { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import Snackbar from "@mui/material/Snackbar";
 import Button from "@mui/material/Button";
 import Accordion from "@mui/material/Accordion";
@@ -11,9 +10,25 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 
 import "./LineInput.css";
-// import yourTurnSound from './mixkit-message-pop-alert-2354.mp3';
+import {
+  caret,
+  donePoemAccordionText,
+  donePoemButton,
+  errorMessage,
+  helpMessageStyle,
+  inactiveInput,
+  lineInputContainer,
+  mainInputContainer,
+  passButton,
+  poemInputStyle,
+  textSpacer,
+} from "./styles";
 
-import type { IUserInfo } from "../../types";
+import type {
+  ClientToServerEvents,
+  IUserInfo,
+  ServerToClientEvents,
+} from "../../types";
 
 // if activeEditor, the letters are visible and textarea is editable
 // if inactiveEditor, the letters are invisible, and textarea is not editable
@@ -36,7 +51,7 @@ function useStateRef(initialValue: boolean) {
 const LineInput = ({
   socket,
 }: {
-  socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>
 }) => {
   const minCharsOnLineOne = 30;
   const maxCharsOnLineOne = 70;
@@ -173,7 +188,7 @@ const LineInput = ({
   // handles any change to the textarea element. written to be as fast as possible, so a bit verbose
   function handlePoemBodyChange(evt: {
     preventDefault: () => void;
-    target: { value: React.SetStateAction<string> };
+    target: { value: string };
   }) {
     evt.preventDefault();
 
@@ -306,12 +321,11 @@ const LineInput = ({
     socket.emit("sendAllUserInfoToAll");
   }
 
-  function handleKeypress(e: { charCode: number; ctrlKey: any }) {
+  function handleKeypress({ charCode, ctrlKey }: KeyboardEvent) {
     // it triggers by pressing ctrl + enter (13), when the "Done Line" button is enabled
     // might not be necessary, but it's kind of nice
     // note we use doneLineRef instead of doneLineEnabled because it gets the current value
-
-    if (doneLineRef.current && e.charCode === 13 && e.ctrlKey) {
+    if (doneLineRef.current && charCode === 13 && ctrlKey) {
       makeExquisite();
     }
   }
@@ -320,23 +334,40 @@ const LineInput = ({
     // the initial idea here was to have a single textarea element that was editable
     // an alternative idea is to have this element be composed of a non-editable portion
     // and an editable portion
-    <div className={"line-input-container"}>
+    <div
+      className={"line-input-container"}
+      style={lineInputContainer}
+    >
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         open={snackOpen}
         onClose={handleClose}
         message={snackMessage}
       />
-      <div className={"main-input-container"}>
-        <div className={"help-message"}>{helpMessage}</div>
+      <div
+        className={"main-input-container"}
+        style={mainInputContainer}
+      >
+        <div
+          className={"help-message"}
+          style={helpMessageStyle}
+        >
+          {helpMessage}
+        </div>
         <div className={"input-box"}>
           {lineInputVisible ? (
             <div className={"active-input"}>
-              <div className={"error-msg"}>{inputErrorMsg}</div>
+              <div
+                className={"error-message"}
+                style={errorMessage}
+              >
+                {inputErrorMsg}
+              </div>
               <textarea
                 className={"poem-input"}
                 ref={textareaRef}
                 value={poemInput}
+                style={poemInputStyle}
                 onChange={handlePoemBodyChange}
                 onKeyPress={handleKeypress}
                 rows={2}
@@ -351,16 +382,29 @@ const LineInput = ({
               ></textarea>
             </div>
           ) : (
-            <div className={"inactive-input"}>
-              <div className={"text-spacer"} data-autofocus={true}>
+              <div
+                className={"inactive-input"}
+                style={inactiveInput}
+              >
+                <div
+                  className={"text-spacer"}
+                  data-autofocus={true}
+                  style={textSpacer}
+                >
                 {poemInput.replaceAll(/[^\n]/g, "*")}
-                <div id="caret"></div>
+                  <div
+                    id="caret"
+                    style={caret}
+                  ></div>
               </div>
             </div>
           )}
         </div>
         <div className={"pass-button-container"}>
-          <div className={"pass-button"}>
+          <div
+            className={"pass-button"}
+            style={passButton}
+          >
             {doneLineEnabled && (
               <Button
                 variant={"contained"}
@@ -386,12 +430,18 @@ const LineInput = ({
               </AccordionSummary>
               <AccordionDetails>
                 {/*<Typography>*/}
-                <div className={"done-poem-accordion-text"}>
+                <div
+                  className={"done-poem-accordion-text"}
+                  style={donePoemAccordionText}
+                >
                   Only press this button if you're absolutely certain the poem
                   is done!
                 </div>
                 {/*</Typography>*/}
-                <div className={"done-poem-button"}>
+                <div
+                  className={"done-poem-button"}
+                  style={donePoemButton}
+                >
                   <Button
                     variant={"contained"}
                     onClick={finishExquisite}

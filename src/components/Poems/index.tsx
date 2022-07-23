@@ -4,20 +4,22 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
 import {
+  ClientToServerEvents,
   IPoem,
   IPoems,
+  ServerToClientEvents,
 } from "../../types";
-import "./Poems.css";
+import {
+  poemsBody,
+  poemFont,
+} from "./styles";
 
-function Poems({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> }) {
+function Poems({ socket }: { socket: Socket<ServerToClientEvents, ClientToServerEvents> }) {
   // The poems state is a plain object that contains each poem indexed by the poem ID.
   // Using React hooks, this state is updated inside the event handlers to reflect the changes provided by the server.
   const [poems, setPoems] = React.useState<IPoems>({} as IPoems);
-
-  // const [poemsVisible, setPoemsVisible] = React.useState(false);
 
   React.useEffect(() => {
     // Event handlers for the poem and the deletePoem events are set up for the Socket.IO connection.
@@ -43,7 +45,7 @@ function Poems({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> 
   return (
     // The component then displays all poems sorted by the timestamp at which they were created.
     // we can switch this so that it renders previous poems according to a view
-    <div className="poems-body">
+    <div style={poemsBody}>
       {[...Object.values(poems)]
         .sort((a, b) => Number(a.time) - Number(b.time))
         .map((poem) => (
@@ -59,7 +61,12 @@ function Poems({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> 
                 </div>
               </AccordionSummary>
               <AccordionDetails>
-                <div className={"poem"}>{poem.content}</div>
+                <div
+                  className={"poem"}
+                  style={poemFont}
+                >
+                  {poem.content}
+                </div>
               </AccordionDetails>
             </Accordion>
           </div>
