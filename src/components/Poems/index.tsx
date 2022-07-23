@@ -45,7 +45,7 @@ function Poems({ socket }: { socket: Socket<DefaultEventsMap, DefaultEventsMap> 
     // we can switch this so that it renders previous poems according to a view
     <div className="poems-body">
       {[...Object.values(poems)]
-        .sort((a, b) => a.time - b.time)
+        .sort((a, b) => Number(a.time) - Number(b.time))
         .map((poem) => (
           <div key={poem.id} className="poem-container">
             <Accordion>

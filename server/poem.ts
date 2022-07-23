@@ -3,7 +3,6 @@
 // as far as I can tell, this will be the equivalent of the exquisite functionality, etc.
 
 import { Server, Socket } from "socket.io";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { ClientToServerEvents, ILine, InterServerEvents, IPoem, ServerToClientEvents, SocketData } from "../src/types";
 
 const defaultUser = {
@@ -33,7 +32,7 @@ const db = require('./queries');
 // initialReturnPoems();
 
 async function populatePoems() {
-    const dbPoems = await db.returnPoems();
+    const dbPoems = await db.returnPoems(3);
     for (const { id, content, time, title } of dbPoems) {
         poems.add({
             id,
@@ -233,7 +232,7 @@ class Connection {
             id: uuidv4(),
             user: users.get(this.socket) || defaultUser,
             value,
-            time: Date.now()
+            time: new Date()
         };
         lines.add(line);
 
@@ -266,7 +265,7 @@ class Connection {
         const poem: IPoem = {
             id: uuidv4(),
             content: poemString,
-            time: Date.now(),
+            time: new Date(),
             title: `exquisite text #${Math.round(Math.random() * 100)}`,
         };
         poems.add(poem);
