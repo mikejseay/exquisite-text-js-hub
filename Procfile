@@ -1,1 +1,1 @@
-web: ts-node --transpile-only ./server/start.ts
+web: cd server && ts-node --transpile-only start.ts
