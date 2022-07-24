@@ -1,1 +1,1 @@
-web: ts-node ./server/start.js
+web: ts-node ./server/start.ts
