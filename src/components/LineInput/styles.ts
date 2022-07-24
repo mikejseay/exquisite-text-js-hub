@@ -2,11 +2,42 @@ import React from "react";
 
 export const inputBox: React.CSSProperties = {
     width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+}
+
+export const activeInput: React.CSSProperties = {
+    margin: "auto",
+    width: "100%",
+    maxWidth: "60ch",
+    display: "grid",
 }
 
 export const donePoemAccordionTitle: React.CSSProperties = {
     margin: "auto",
 }
+
+export const suggestedInputDiv: React.CSSProperties = {
+    zIndex: 1,
+    whiteSpace: "pre",
+    gridRowStart: 1,
+    gridColumnStart: 1,
+    padding: "0.2em 0",
+    textAlign: "center",
+    lineHeight: "150%",
+    userSelect: "none",
+}
+
+export const underlineSpan: React.CSSProperties = {
+    borderBottom: "2px #aaaaaa solid",
+}
+
+export const underlineSpanHover: React.CSSProperties = {
+    // boxShadow: "0.1em 0.1em 0.6em grey",
+    // boxShadow: "none",
+    borderBottom: "4px #aaaaaa solid",
+};
 
 export const poemInputStyle: React.CSSProperties = {
     outline: "none",
@@ -17,26 +48,34 @@ export const poemInputStyle: React.CSSProperties = {
     lineHeight: "150%",
     cursor: "text",
     border: "none",
-    backgroundImage: "linear-gradient(to right, #ffffff, #eeeeee)",
-    boxShadow: "0.1em 0.1em 0.5em #bbbbbb",
+    // border: "1px #eeeeee solid",
+    // backgroundImage: "linear-gradient(to right, #ffffff, #eeeeee)",
+    // boxShadow: "0.1em 0.1em 0.5em #bbbbbb",
+    boxShadow: "none",
     borderRadius: "0.75em",
     padding: "0.2em 0",
     whiteSpace: "nowrap",
     width: "100%",
-    maxWidth: "100%",
+    maxWidth: "60ch",
     overflowX: "hidden",
+    margin: "auto",
+    display: "block",
+    zIndex: 2,
+    gridRowStart: 1,
+    gridColumnStart: 1,
+    background: "transparent",
 };
 
-export const poemInputStyleHover: React.CSSProperties = {
-    boxShadow: "0.1em 0.1em 0.6em grey",
-};
+export const spacingSpan: React.CSSProperties = {
+    margin: "auto",
+}
 
 export const textSpacer: React.CSSProperties = {
-    whiteSpace: "pre-line",
-    display: "inline-block",
+    whiteSpace: "pre",
     color: "white",
-    // maxWidth: "52ch",
-    width: "52ch",
+    margin: "auto",
+    width: "auto",
+    textAlign: "center",
 };
 
 export const errorMessage: React.CSSProperties = {
@@ -82,6 +121,10 @@ export const mainInputContainer: React.CSSProperties = {
 
 export const inactiveInput: React.CSSProperties = {
     marginTop: "1em",
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
 };
 
 export const caret: React.CSSProperties = {
