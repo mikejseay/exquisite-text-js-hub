@@ -14,6 +14,7 @@ import {
 import {
   poemsBody,
   poemFont,
+  poemTitle,
 } from "./styles";
 
 function Poems({ socket }: { socket: Socket<ServerToClientEvents, ClientToServerEvents> }) {
@@ -56,7 +57,7 @@ function Poems({ socket }: { socket: Socket<ServerToClientEvents, ClientToServer
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <div className={"poem-title"}>
+                <div style={poemTitle} className={"poem-title"}>
                   <strong>{poem.title}</strong>
                 </div>
               </AccordionSummary>

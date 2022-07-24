@@ -1,4 +1,4 @@
-import { express } from "./../app";
+import { express } from "../app";
 import {
   NextFunction,
   Response,
@@ -12,7 +12,8 @@ router.get('/', function(
   res: Response,
   next: NextFunction,
 ) {
-  res.render('index', { title: 'Express' });
+  // res.render('index', { title: 'Express' });
+  res.send('index');
   // res.json({ title: 'Express' });
 });
 
