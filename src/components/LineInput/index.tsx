@@ -17,11 +17,14 @@ import {
   errorMessage,
   helpMessageStyle,
   inactiveInput,
+  inputBox,
   lineInputContainer,
   mainInputContainer,
   passButton,
   poemInputStyle,
+  poemInputStyleHover,
   textSpacer,
+  donePoemAccordionTitle,
 } from "./styles";
 
 import type {
@@ -201,7 +204,7 @@ const LineInput = ({
         const useInput = lines[0].slice(0, maxCharsOnLineOne);
         setPoemInput(useInput);
         socket.emit("lineEdit", useInput);
-        sendNotification("Less on first line!");
+        sendNotification("You hit the max for first line, press Enter/Return!");
         // setMessageType(1);
         // setProgress(useInput.length / idealCharsOnLineOne);
         helpBasedOnProgress(1, useInput.length / idealCharsOnLineOne);
@@ -222,7 +225,7 @@ const LineInput = ({
           lines[0] + lineSepString + lines[1].slice(0, maxCharsOnLineTwo);
         setPoemInput(useInput);
         socket.emit("lineEdit", useInput);
-        sendNotification("Less on second line!");
+        sendNotification("That's enough. If done, click pass!");
         // setMessageType(2);
         // setProgress(maxCharsOnLineTwo / idealCharsOnLineTwo);
         helpBasedOnProgress(2, maxCharsOnLineTwo / idealCharsOnLineTwo);
@@ -354,7 +357,10 @@ const LineInput = ({
         >
           {helpMessage}
         </div>
-        <div className={"input-box"}>
+        <div
+          className={"input-box"}
+          style={inputBox}
+        >
           {lineInputVisible ? (
             <div className={"active-input"}>
               <div
@@ -371,7 +377,7 @@ const LineInput = ({
                 onChange={handlePoemBodyChange}
                 onKeyPress={handleKeypress}
                 rows={2}
-                cols={idealCharsOnLineOne}
+                // cols={idealCharsOnLineOne}
                 autoFocus={true}
                 readOnly={!lineInputEnabled}
                 onFocus={() =>
@@ -379,6 +385,18 @@ const LineInput = ({
                     ? textareaRef.current.setSelectionRange(-1, -1)
                     : {}
                 }
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (!isNil(poemInputStyleHover.boxShadow)) {
+                    target.style.boxShadow = poemInputStyleHover.boxShadow;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (!isNil(poemInputStyle.boxShadow)) {
+                    target.style.boxShadow = poemInputStyle.boxShadow;
+                  }
+                }}
               ></textarea>
             </div>
           ) : (
@@ -417,16 +435,23 @@ const LineInput = ({
           </div>
         </div>
         {poemDoneAccordionVisible && (
-          <div className={"done-poem-accordion"}>
+          <div
+            className={"done-poem-accordion"}
+          >
             <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <Typography>
-                  <strong>Does the poem seem like it's done?</strong>
-                </Typography>
+                <div
+                  className={"done-poem-accordion-title"}
+                  style={donePoemAccordionTitle}
+                >
+                  <Typography>
+                    <strong>Does the poem seem like it's done?</strong>
+                  </Typography>
+                </div>
               </AccordionSummary>
               <AccordionDetails>
                 {/*<Typography>*/}

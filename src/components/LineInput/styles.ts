@@ -1,5 +1,13 @@
 import React from "react";
 
+export const inputBox: React.CSSProperties = {
+    width: "100%",
+}
+
+export const donePoemAccordionTitle: React.CSSProperties = {
+    margin: "auto",
+}
+
 export const poemInputStyle: React.CSSProperties = {
     outline: "none",
     fontFamily: "'Esteban', serif",
@@ -8,12 +16,27 @@ export const poemInputStyle: React.CSSProperties = {
     resize: "none",
     lineHeight: "150%",
     cursor: "text",
+    border: "none",
+    backgroundImage: "linear-gradient(to right, #ffffff, #eeeeee)",
+    boxShadow: "0.1em 0.1em 0.5em #bbbbbb",
+    borderRadius: "0.75em",
+    padding: "0.2em 0",
+    whiteSpace: "nowrap",
+    width: "100%",
+    maxWidth: "100%",
+    overflowX: "hidden",
+};
+
+export const poemInputStyleHover: React.CSSProperties = {
+    boxShadow: "0.1em 0.1em 0.6em grey",
 };
 
 export const textSpacer: React.CSSProperties = {
     whiteSpace: "pre-line",
     display: "inline-block",
-    color: "white"
+    color: "white",
+    // maxWidth: "52ch",
+    width: "52ch",
 };
 
 export const errorMessage: React.CSSProperties = {
@@ -43,7 +66,8 @@ export const donePoemAccordionText: React.CSSProperties = {
 };
 
 export const lineInputContainer: React.CSSProperties = {
-    marginTop: "2em"
+    marginTop: "2em",
+    width: "80%",
 };
 
 export const mainInputContainer: React.CSSProperties = {

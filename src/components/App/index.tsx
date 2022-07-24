@@ -33,8 +33,6 @@ function App() {
   const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
 
   useEffect(() => {
-    console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
-    console.log('serverPath: ', serverPath);
     const newSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io(serverPath);
     setSocket(newSocket);
 
@@ -47,7 +45,6 @@ function App() {
   if (!socket) {
     return <div>Not Connected</div>;
   }
-  console.log(socket);
 
   return (
     <div style={possibleSocket}>
