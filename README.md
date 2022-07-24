@@ -65,14 +65,22 @@ In the server terminal, run `yarn start`, then in the root terminal run `yarn st
 
 ### Heroku Deployment
 
-To run your own Exquisite Text server and client, we recommend cloning this repo, setting a heroku remote, and pushing the repo the heroku remote. Note that in order to do this, you must first create a Heroku account and install the Heroku CLI tools.
+To deploy Exquisite Text to Heroku, we will roughly follow [this guide](https://devcenter.heroku.com/articles/git).
+
+First, you must be using a Git-enabled command-line. For Windows, we recommend the Git Bash utility in [Git for Windows](https://gitforwindows.org/).
+
+Next, you must make an account with Heroku and install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli).
+
+From the root directory of this repo, log in to your Heroku account with `heroku login`, which will allow you to enter your credentials through the browser. Then run the following commands:
 
 ```sh
-git clone https://github.com/mikejseay/exquisite-text.git
-cd exquisite-text
-heroku git:remote -a my-exquisite-text
+heroku create -a my-exquisite-text
 git push heroku main
 ```
+
+This will create a new Heroku app named `my-exquisite-text` and build the project in that app.
+
+Soon we will add more docs to explain how to use Heroku Postgres to keep a database of poems.
 
 ## License
 

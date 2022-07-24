@@ -1,4 +1,4 @@
-import { express } from "./../app";
+import { express } from "../app";
 import {
   NextFunction,
   Response,
