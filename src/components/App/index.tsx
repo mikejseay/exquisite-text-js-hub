@@ -27,7 +27,7 @@ import type {
 function App() {
   const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
   useEffect(() => {
-    const isProduction = true;
+    const isProduction = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
     const serverPath = isProduction
       ? `/`
       : `http://${window.location.hostname}:3000`;
