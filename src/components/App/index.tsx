@@ -24,15 +24,18 @@ import type {
   ServerToClientEvents,
 } from "../../types";
 
+const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+const serverPath: URL["pathname"] | URL["href"] = isDevelopment
+  ? `http://${window.location.hostname}:3000`
+  : `/`;
+
 function App() {
   const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
+
   useEffect(() => {
-    const isProduction = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-    const serverPath = isProduction
-      ? `/`
-      : `http://${window.location.hostname}:3000`;
     const newSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io(serverPath);
     setSocket(newSocket);
+
     return () => { newSocket.close() };
   }, [setSocket]);
 
