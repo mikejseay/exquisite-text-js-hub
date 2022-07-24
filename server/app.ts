@@ -20,7 +20,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
 const isProduction = process.env.NODE_ENV === "production";
-const targetDir = isProduction ? '../../build' : 'public';
+const targetDir = isProduction ? '../build' : 'public';
 
 app.use(express.static(path.join(__dirname, targetDir)));
 app.use('/', indexRouter);                      // sets the router for the root page /
