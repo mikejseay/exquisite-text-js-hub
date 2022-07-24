@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 
 import "./LineInput.css";
 import {
+  activeInput,
   caret,
   donePoemAccordionText,
   donePoemButton,
@@ -22,9 +23,12 @@ import {
   mainInputContainer,
   passButton,
   poemInputStyle,
-  poemInputStyleHover,
   textSpacer,
   donePoemAccordionTitle,
+  suggestedInputDiv,
+  underlineSpan,
+  underlineSpanHover,
+  spacingSpan
 } from "./styles";
 
 import type {
@@ -71,6 +75,7 @@ const LineInput = ({
   // we need an additional doneLineRef object that allows us to get its current state
   const [doneLineEnabled, setDoneLine, doneLineRef] = useStateRef(true);
 
+  const [onSecondLine, setOnSecondLine] = useState(false);
   const [donePoemEnabled, setDonePoem] = useState(true);
   const [lineInputVisible, setLineInputVisible] = useState(false);
   const [lineInputEnabled, setLineInputEnabled] = useState(false);
@@ -200,11 +205,13 @@ const LineInput = ({
     if (lines.length === 1) {
       // only one line
 
+      setOnSecondLine(false);
+
       if (lines[0].length > maxCharsOnLineOne) {
         const useInput = lines[0].slice(0, maxCharsOnLineOne);
         setPoemInput(useInput);
         socket.emit("lineEdit", useInput);
-        sendNotification("You hit the max for first line, press Enter/Return!");
+        sendNotification("First line maxed, press Enter/Return to go to next.");
         // setMessageType(1);
         // setProgress(useInput.length / idealCharsOnLineOne);
         helpBasedOnProgress(1, useInput.length / idealCharsOnLineOne);
@@ -217,21 +224,28 @@ const LineInput = ({
         helpBasedOnProgress(1, evt.target.value.length / idealCharsOnLineOne);
         setDoneLine(false);
       }
+
     } else if (lines.length === 2) {
+      // two lines
+
       if (lines[1].length > maxCharsOnLineTwo) {
         // second line too long
+
+        setOnSecondLine(true);
 
         const useInput =
           lines[0] + lineSepString + lines[1].slice(0, maxCharsOnLineTwo);
         setPoemInput(useInput);
         socket.emit("lineEdit", useInput);
-        sendNotification("That's enough. If done, click pass!");
+        sendNotification("That's the max. When done, click pass.");
         // setMessageType(2);
         // setProgress(maxCharsOnLineTwo / idealCharsOnLineTwo);
         helpBasedOnProgress(2, maxCharsOnLineTwo / idealCharsOnLineTwo);
         setDoneLine(true);
       } else if (lines[0].length < minCharsOnLineOne) {
         // first line too short
+
+        setOnSecondLine(false);
 
         setPoemInput(lines[0]);
         socket.emit("lineEdit", lines[0]);
@@ -242,6 +256,8 @@ const LineInput = ({
         setDoneLine(false);
       } else {
         // just right!
+
+        setOnSecondLine(true);
 
         setPoemInput(evt.target.value);
         socket.emit("lineEdit", evt.target.value);
@@ -256,6 +272,8 @@ const LineInput = ({
       }
     } else {
       // more than 2 lines somehow (e.g. large copy-paste or press enter on line two)
+
+      setOnSecondLine(true);
 
       const useInput =
         lines[0] + lineSepString + lines[1].slice(0, maxCharsOnLineTwo);
@@ -289,6 +307,8 @@ const LineInput = ({
       setPoemInput(secondPart);
       socket.emit("lineEdit", secondPart);
 
+      setOnSecondLine(false);
+
       // emit a message of the first part to be posted to the Lines
       socket.emit("line", firstPart);
 
@@ -308,6 +328,7 @@ const LineInput = ({
     // set the input textarea to be blank
     setPoemInput("");
     socket.emit("lineEdit", "");
+    setOnSecondLine(false);
 
     // this client only tell the server to do the ending event
     socket.emit("poemDone");
@@ -358,16 +379,46 @@ const LineInput = ({
           {helpMessage}
         </div>
         <div
+          className={"error-message"}
+          style={errorMessage}
+        >
+          {inputErrorMsg}
+        </div>
+        <div
           className={"input-box"}
           style={inputBox}
         >
           {lineInputVisible ? (
-            <div className={"active-input"}>
+            <div
+              className={"active-input"}
+              style={activeInput}
+              onMouseOver={(e) => {
+                const target = document.getElementById("hoverSensitiveSpan") as HTMLElement;
+                if (!isNil(underlineSpanHover.borderBottom)) {
+                  target.style.borderBottom = underlineSpanHover.borderBottom as string;
+                }
+              }}
+              onMouseOut={(e) => {
+                const target = document.getElementById("hoverSensitiveSpan") as HTMLElement;
+                if (!isNil(underlineSpan.borderBottom)) {
+                  target.style.borderBottom = underlineSpan.borderBottom as string;
+                }
+              }}
+            >
               <div
-                className={"error-message"}
-                style={errorMessage}
+                className={"underline-suggestion"}
+                style={suggestedInputDiv}
               >
-                {inputErrorMsg}
+                <span
+                  id={"hoverSensitiveSpan"}
+                  style={underlineSpan}
+                >
+                  {onSecondLine ? (
+                    "  ".repeat(idealCharsOnLineOne) + "\n" + "  ".repeat(idealCharsOnLineTwo)
+                  ) : (
+                    "  ".repeat(idealCharsOnLineOne)
+                  )}
+                </span>
               </div>
               <textarea
                 className={"poem-input"}
@@ -385,18 +436,6 @@ const LineInput = ({
                     ? textareaRef.current.setSelectionRange(-1, -1)
                     : {}
                 }
-                onMouseEnter={(e) => {
-                  const target = e.target as HTMLElement;
-                  if (!isNil(poemInputStyleHover.boxShadow)) {
-                    target.style.boxShadow = poemInputStyleHover.boxShadow;
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  const target = e.target as HTMLElement;
-                  if (!isNil(poemInputStyle.boxShadow)) {
-                    target.style.boxShadow = poemInputStyle.boxShadow;
-                  }
-                }}
               ></textarea>
             </div>
           ) : (
@@ -409,7 +448,11 @@ const LineInput = ({
                   data-autofocus={true}
                   style={textSpacer}
                 >
-                {poemInput.replaceAll(/[^\n]/g, "*")}
+                  <span
+                    style={spacingSpan}
+                  >
+                    {poemInput.replaceAll(/[^\n]/g, "*")}
+                  </span>
                   <div
                     id="caret"
                     style={caret}
