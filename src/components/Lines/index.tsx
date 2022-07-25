@@ -9,7 +9,6 @@ import {
 } from "../../types";
 import {
   lineStyle,
-  fakeHelpMessage,
 } from "./styles";
 
 // if activeEditor or inactiveEditor, NOTHING is visible here until the end
@@ -25,7 +24,6 @@ function Lines({
   const [lines, setLines] = useState<ILines>({});
 
   const [linesVisible, setLinesVisible] = useState(false);
-  const [helpMessage, setHelpMessage] = useState("");
 
   useEffect(() => {
     // Event handlers for the line and the deleteLine events are set up for the Socket.IO connection.
@@ -39,19 +37,15 @@ function Lines({
 
     const clearLineListener = () => {
       setLines({});
-      console.log("clearLines was reached once");
     };
 
     const userInfoListener = (userInfo: IUserInfo) => {
       if (userInfo["role"] === "activeEditor") {
         setLinesVisible(false);
-        setHelpMessage("");
       } else if (userInfo["role"] === "inactiveEditor") {
         setLinesVisible(false);
-        setHelpMessage("");
       } else if (userInfo["role"] === "spectator") {
         setLinesVisible(true);
-        setHelpMessage("Your friends are writing 👇");
       }
     };
 
@@ -78,12 +72,6 @@ function Lines({
     // The component then displays all lines sorted by the timestamp at which they were created.
     // we can switch this so that it renders previous lines according to a view
     <div className="lines-outer-container">
-      <div
-        className={"fake-help-message"}
-        style={fakeHelpMessage}
-      >
-        {helpMessage}
-      </div>
       <div className="lines-container">
         {[...Object.values(lines)]
           .sort((a, b) => Number(a.time) - Number(b.time))

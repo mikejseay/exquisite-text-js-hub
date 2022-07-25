@@ -1,5 +1,14 @@
 import React from "react";
 
+export const lineContainer: React.CSSProperties = {
+    margin: "0.25em 0"
+}
+
+export const lineStyle: React.CSSProperties = {
+    flexGrow: 1,
+    whiteSpace: "pre-line",
+};
+
 export const inputBox: React.CSSProperties = {
     width: "100%",
     display: "flex",
@@ -18,12 +27,12 @@ export const donePoemAccordionTitle: React.CSSProperties = {
     margin: "auto",
 }
 
-export const suggestedInputDiv: React.CSSProperties = {
+export const underlineSuggestionDiv: React.CSSProperties = {
     zIndex: 1,
     whiteSpace: "pre",
     gridRowStart: 1,
     gridColumnStart: 1,
-    padding: "0.2em 0",
+    padding: "0",
     textAlign: "center",
     lineHeight: "150%",
     userSelect: "none",
@@ -53,8 +62,8 @@ export const poemInputStyle: React.CSSProperties = {
     // boxShadow: "0.1em 0.1em 0.5em #bbbbbb",
     boxShadow: "none",
     borderRadius: "0.75em",
-    padding: "0.2em 0",
-    whiteSpace: "nowrap",
+    padding: "0",
+    whiteSpace: "pre",
     width: "100%",
     maxWidth: "60ch",
     overflowX: "hidden",
@@ -93,6 +102,7 @@ export const passButton: React.CSSProperties = {
 export const helpMessageStyle: React.CSSProperties = {
     fontFamily: "sans-serif",
     whiteSpace: "pre-line",
+    height: "1.2em",
 };
 
 export const donePoemButton: React.CSSProperties = {
@@ -106,7 +116,7 @@ export const donePoemAccordionText: React.CSSProperties = {
 
 export const lineInputContainer: React.CSSProperties = {
     marginTop: "2em",
-    width: "80%",
+    width: "100%",
 };
 
 export const mainInputContainer: React.CSSProperties = {

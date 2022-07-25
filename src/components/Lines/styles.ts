@@ -5,6 +5,3 @@ export const lineStyle: React.CSSProperties = {
   whiteSpace: "pre-line",
 };
 
-export const fakeHelpMessage: React.CSSProperties = {
-  fontFamily: "sans-serif",
-};
