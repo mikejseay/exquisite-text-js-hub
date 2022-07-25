@@ -10,15 +10,16 @@ export const tutorial = {
   position: "absolute",
   top: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: "65ch",
 } as React.CSSProperties;
 
 export const modalContent = {
+  fontSize: "16px",
   marginRight: "auto",
   whiteSpace: "pre-line",
 } as React.CSSProperties;
 
 export const modalTitle = {
-  fontSize: "18px",
+  fontSize: "17px",
   textAlign: "center",
 } as React.CSSProperties;
