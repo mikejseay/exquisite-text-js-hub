@@ -471,9 +471,9 @@ const LineInput = ({
                   style={underlineSpan}
                 >
                   {onSecondLine ? (
-                    "  ".repeat(idealCharsOnLineOne) + "\n" + "  ".repeat(idealCharsOnLineTwo)
+                    "  ".repeat(idealCharsOnLineOne + 3) + "\n" + "  ".repeat(idealCharsOnLineTwo + 3)
                   ) : (
-                    "  ".repeat(idealCharsOnLineOne)
+                    "  ".repeat(idealCharsOnLineOne + 3)
                   )}
                 </span>
               </div>

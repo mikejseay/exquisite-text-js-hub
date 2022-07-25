@@ -14,6 +14,7 @@ export const inputBox: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    marginBottom: "1em",
 }
 
 export const activeInput: React.CSSProperties = {
