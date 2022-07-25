@@ -56,7 +56,7 @@ function App() {
           <Settings />
         </header>
         <div style={appBody}>
-          <Lines socket={socket} />
+          {/*<Lines socket={socket} />*/}
           <LineInput socket={socket} />
           <Poems socket={socket} />
         </div>

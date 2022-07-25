@@ -25,14 +25,18 @@ import {
   poemInputStyle,
   textSpacer,
   donePoemAccordionTitle,
-  suggestedInputDiv,
+  underlineSuggestionDiv,
   underlineSpan,
   underlineSpanHover,
-  spacingSpan
+  spacingSpan,
+  lineStyle,
+  lineContainer,
 } from "./styles";
 
 import type {
   ClientToServerEvents,
+  ILine,
+  ILines,
   IUserInfo,
   ServerToClientEvents,
 } from "../../types";
@@ -68,6 +72,12 @@ const LineInput = ({
   const idealCharsOnLineTwo = 30;
   const lineSepString = "\n";
 
+  // The lines state is a plain object that contains each line indexed by the line ID.
+  // Using React hooks, this state is updated inside the event handlers to reflect the changes provided by the server.
+  const [lines, setLines] = useState<ILines>({});
+
+  const [linesVisible, setLinesVisible] = useState(false);
+
   const [poemInput, setPoemInput] = useState("");
 
   // a single boolean that determines whether the "Done Line" button should be enabled or disabled
@@ -101,12 +111,25 @@ const LineInput = ({
   };
 
   useEffect(() => {
+    const lineListener = (line: ILine) => {
+      setLines((prevLines) => {
+        const newLines = { ...prevLines };
+        newLines[line.id] = line;
+        return newLines;
+      });
+    };
+
+    const clearLineListener = () => {
+      setLines({});
+    };
+
     const lineEditListener = (lineEdit: React.SetStateAction<string>) => {
       setPoemInput(lineEdit);
     };
 
     const userInfoListener = (userInfo: IUserInfo) => {
       if (userInfo["role"] === "activeEditor") {
+        setLinesVisible(false);
         setHelpMessage("Complete a line of poetry.");
         setLineInputVisible(true);
         setLineInputEnabled(true);
@@ -120,6 +143,7 @@ const LineInput = ({
         setSnackOpen(true);
         setTimeout(() => setSnackOpen(false), 3000);
       } else if (userInfo["role"] === "inactiveEditor") {
+        setLinesVisible(false);
         setHelpMessage("Your friend is writing 👇");
         setLineInputVisible(false);
         setLineInputEnabled(false);
@@ -130,16 +154,19 @@ const LineInput = ({
         setSnackOpen(true);
         setTimeout(() => setSnackOpen(false), 3000);
       } else if (userInfo["role"] === "spectator") {
-        setHelpMessage("");
+        setLinesVisible(true);
+        setHelpMessage("Your friends are writing 👇");
         setLineInputVisible(true);
         setLineInputEnabled(false);
         setDoneLine(false);
         setDonePoem(false);
         setPoemDoneAccordionVisible(false);
-        setInputErrorMsg("");
-        setHelpMessage(lineSepString);
+        setInputErrorMsg("\n");
       }
     };
+
+    socket.on("line", lineListener);
+    socket.on("clearLines", clearLineListener);
 
     // additionally, tell React to set the poem textarea to change
     // whenever a lineEdit event is emitted
@@ -149,12 +176,18 @@ const LineInput = ({
     // since this is client-side, it only happens for this client
     socket.emit("getLineEdit");
 
+    // tells the server for this client to do getLines
+    // since this is client-side, it only happens for this client
+    socket.emit("getLines");
+
     socket.on("userInfo", userInfoListener);
     socket.emit("sendUserInfo");
 
     return () => {
       socket.off("lineEdit", lineEditListener);
       socket.off("userInfo", userInfoListener);
+      socket.off("line", lineListener);
+      socket.off("clearLines", clearLineListener);
     };
   }, [socket]);
 
@@ -384,6 +417,30 @@ const LineInput = ({
         >
           {inputErrorMsg}
         </div>
+        {linesVisible ? (
+          <div className="lines-outer-container">
+            <div className="lines-container">
+              {[...Object.values(lines)]
+                .sort((a, b) => Number(a.time) - Number(b.time))
+                .map((line) => (
+                  <div
+                    className="line-container"
+                    key={line.id}
+                    style={lineContainer}
+                  >
+                    <div
+                      className="line"
+                      style={lineStyle}
+                    >
+                      {line.value}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        ) : (
+          <React.Fragment />
+        )}
         <div
           className={"input-box"}
           style={inputBox}
@@ -407,7 +464,7 @@ const LineInput = ({
             >
               <div
                 className={"underline-suggestion"}
-                style={suggestedInputDiv}
+                style={underlineSuggestionDiv}
               >
                 <span
                   id={"hoverSensitiveSpan"}
